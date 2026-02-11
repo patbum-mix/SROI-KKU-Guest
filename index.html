@@ -3,58 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Security Headers -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://translate.google.com https://translate.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://translate.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://translate.googleapis.com; frame-src https://translate.google.com;">
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-Frame-Options" content="DENY">
-    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
-    <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
-    <meta name="robots" content="noindex, nofollow">
-    
-    <title>SROI Platform Demo - ทดลองใช้งาน (ปลอดภัย)</title>
-    
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <title>SROI Platform Demo - ทดลองใช้งาน</title>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer">
-    
-    <!-- Styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
-    
-    <!-- XLSX Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha512-r22gChDnGvBylk90+2e/ycr+equG0wZR0w8nzE0CmWOqW6PnlJaTXvqY7VF7T7DGjGzm6LpZSYGV3k3mLsxCQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    
-    <script nonce="demo-script-2024">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
         // Demo Mode - ไม่ต้อง login
         var currentProjectId = null;
         var DEMO_MODE = true;
-        
-        // Security: Prevent console access in production
-        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-            console.log = function() {};
-            console.warn = function() {};
-            console.error = function() {};
-        }
-        
-        // Security: Disable right-click context menu
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-        });
-        
-        // Security: Disable certain keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
-            if (e.keyCode === 123 || 
-                (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) ||
-                (e.ctrlKey && e.keyCode === 85)) {
-                e.preventDefault();
-                return false;
-            }
-        });
     </script>
 </head>
 <body>
@@ -65,30 +22,13 @@
     <!-- ===== LOGIN PAGE ===== -->
     <div id="login-page">
         <div id="login-wrapper">
-            <img id="login-bg" src="login-bg.png" alt="Login Background" loading="lazy">
+            <img id="login-bg" src="login-bg.png">
             <div class="login-overlay">
-                <button class="overlay-btn no-select" id="btn-login-kku" onclick="doLogin()" type="button" title="Login KKU" aria-label="Login with KKU Account"></button>
-                <button class="overlay-btn no-select" id="btn-thaid" onclick="doLogin()" type="button" title="เข้าสู่ระบบด้วย ThaiID" aria-label="Login with ThaiID"></button>
-                
-                <input type="text" 
-                       class="overlay-input" 
-                       id="input-username" 
-                       placeholder="Username"
-                       autocomplete="off"
-                       autocapitalize="off"
-                       spellcheck="false"
-                       maxlength="50"
-                       aria-label="Username">
-                
-                <input type="password" 
-                       class="overlay-input" 
-                       id="input-password" 
-                       placeholder="Password"
-                       autocomplete="new-password"
-                       maxlength="100"
-                       aria-label="Password">
-                
-                <button class="overlay-btn no-select" id="btn-submit" onclick="doLogin()" type="button" title="เข้าสู่ระบบ" aria-label="Login Submit"></button>
+                <button class="overlay-btn" id="btn-login-kku" onclick="doLogin()" title="Login KKU"></button>
+                <button class="overlay-btn" id="btn-thaid" onclick="doLogin()" title="เข้าสู่ระบบด้วย ThaiID"></button>
+                <input type="text" class="overlay-input" id="input-username" placeholder="Username">
+                <input type="password" class="overlay-input" id="input-password" placeholder="Password">
+                <button class="overlay-btn" id="btn-submit" onclick="doLogin()" title="เข้าสู่ระบบ"></button>
             </div>
         </div>
     </div>
@@ -99,7 +39,7 @@
         <div class="header-top">
             <div class="logo-section">
                 <div class="logo-icon">
-                    <i class="fas fa-chart-line" aria-hidden="true"></i>
+                    <i class="fas fa-chart-line"></i>
                 </div>
                 <div class="logo-text">
                     <h1>SROI Platform</h1>
@@ -107,48 +47,48 @@
                 </div>
             </div>
             <div class="header-actions">
-                <button class="btn-header" onclick="goToDashboard()" type="button">
-                    <i class="fas fa-arrow-left" aria-hidden="true"></i> Dashboard
+                <button class="btn-header" onclick="goToDashboard()">
+                    <i class="fas fa-arrow-left"></i> Dashboard
                 </button>
-                <button class="btn-header" onclick="resetForm()" type="button">
-                    <i class="fas fa-redo" aria-hidden="true"></i> เริ่มใหม่
+                <button class="btn-header" onclick="resetForm()">
+                    <i class="fas fa-redo"></i> เริ่มใหม่
                 </button>
-                <button class="btn-header" onclick="saveData()" type="button">
-                    <i class="fas fa-save" aria-hidden="true"></i> บันทึกข้อมูล
+                <button class="btn-header" onclick="saveData()">
+                    <i class="fas fa-save"></i> บันทึกข้อมูล
                 </button>
-                <button class="btn-header btn-language" onclick="toggleLanguage()" id="langToggleBtn" type="button" title="Switch Language">
-                    <i class="fas fa-globe" aria-hidden="true"></i>
+                <button class="btn-header btn-language" onclick="toggleLanguage()" id="langToggleBtn" title="Switch Language">
+                    <i class="fas fa-globe"></i>
                     <span class="lang-text" id="langText">EN</span>
                 </button>
-                <a href="https://sroi.kku.ac.th" class="btn-header" style="background: linear-gradient(135deg, #38a169, #2f855a); text-decoration: none;" rel="noopener noreferrer" target="_blank">
-                    <i class="fas fa-sign-in-alt" aria-hidden="true"></i> เข้าสู่ระบบจริง
+                <a href="https://sroi.kku.ac.th" class="btn-header" style="background: linear-gradient(135deg, #38a169, #2f855a); text-decoration: none;">
+                    <i class="fas fa-sign-in-alt"></i> เข้าสู่ระบบจริง
                 </a>
             </div>
         </div>
-        <nav class="nav-tabs" role="navigation" aria-label="Main Navigation">
-            <button class="nav-tab active" onclick="showSection('section1', this)" type="button" role="tab" aria-selected="true">
-                <i class="fas fa-file-alt" aria-hidden="true"></i> ข้อมูลโครงการ
+        <nav class="nav-tabs">
+            <button class="nav-tab active" onclick="showSection('section1', this)">
+                <i class="fas fa-file-alt"></i> ข้อมูลโครงการ
             </button>
-            <button class="nav-tab" onclick="showSection('section2', this)" type="button" role="tab" aria-selected="false">
-                <i class="fas fa-cogs" aria-hidden="true"></i> SROI Controller
+            <button class="nav-tab" onclick="showSection('section2', this)">
+                <i class="fas fa-cogs"></i> SROI Controller
             </button>
-            <button class="nav-tab" onclick="showSection('section3', this)" type="button" role="tab" aria-selected="false">
-                <i class="fas fa-calculator" aria-hidden="true"></i> ผลการคำนวณ
+            <button class="nav-tab" onclick="showSection('section3', this)">
+                <i class="fas fa-calculator"></i> ผลการคำนวณ
             </button>
-            <button class="nav-tab" onclick="showSection('section4', this)" type="button" role="tab" aria-selected="false">
-                <i class="fas fa-award" aria-hidden="true"></i> สรุปผล
+            <button class="nav-tab" onclick="showSection('section4', this)">
+                <i class="fas fa-award"></i> สรุปผล
             </button>
         </nav>
     </header>
 
     <!-- Main Content -->
-    <main class="main-content" role="main">
+    <main class="main-content">
         <!-- Section 1: ข้อมูลโครงการ -->
-        <section id="section1" class="section active" role="tabpanel" aria-labelledby="tab-section1">
+        <section id="section1" class="section active">
             <div class="card">
                 <div class="card-header">
                     <div class="card-icon">
-                        <i class="fas fa-info-circle" aria-hidden="true"></i>
+                        <i class="fas fa-info-circle"></i>
                     </div>
                     <div>
                         <h2 class="card-title">ข้อมูลทั่วไปของโครงการ</h2>
@@ -156,244 +96,137 @@
                     </div>
                 </div>
 
-                <form id="projectForm" onsubmit="return false;">
-                    <div class="form-grid">
-                        <div class="form-group full-width">
-                            <label class="form-label" for="projectName">ชื่อโครงการ <span class="required">*</span></label>
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="projectName" 
-                                   name="projectName"
-                                   placeholder="กรอกชื่อโครงการ"
-                                   maxlength="500"
-                                   autocomplete="off"
-                                   required
-                                   aria-required="true">
-                        </div>
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label class="form-label">ชื่อโครงการ <span class="required">*</span></label>
+                        <input type="text" class="form-control" id="projectName" placeholder="กรอกชื่อโครงการ">
+                    </div>
 
-                        <div class="form-group">
-                            <label class="form-label" for="recordDate">วันที่บันทึก</label>
-                            <input type="date" 
-                                   class="form-control" 
-                                   id="recordDate"
-                                   name="recordDate"
-                                   aria-label="Record Date">
-                        </div>
+                    <div class="form-group">
+                        <label class="form-label">วันที่บันทึก</label>
+                        <input type="date" class="form-control" id="recordDate">
+                    </div>
 
-                        <div class="form-group">
-                            <label class="form-label" for="recorderName">ชื่อผู้บันทึก</label>
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="recorderName"
-                                   name="recorderName"
-                                   placeholder="กรอกชื่อผู้บันทึก"
-                                   maxlength="200"
-                                   autocomplete="off">
-                        </div>
+                    <div class="form-group">
+                        <label class="form-label">ชื่อผู้บันทึก</label>
+                        <input type="text" class="form-control" id="recorderName" placeholder="กรอกชื่อผู้บันทึก">
+                    </div>
 
-                        <div class="form-group">
-                            <label class="form-label" for="budget">งบประมาณโครงการ (บาท) <span class="required">*</span></label>
-                            <input type="number" 
-                                   class="form-control" 
-                                   id="budget"
-                                   name="budget"
-                                   placeholder="0.00" 
-                                   min="0" 
-                                   max="999999999999"
-                                   step="0.01"
-                                   required
-                                   aria-required="true">
-                        </div>
+                    <div class="form-group">
+                        <label class="form-label">งบประมาณโครงการ (บาท) <span class="required">*</span></label>
+                        <input type="number" class="form-control" id="budget" placeholder="0.00" min="0" step="0.01">
+                    </div>
 
-                        <div class="form-group">
-                            <label class="form-label" for="projectType">รูปแบบโครงการ</label>
-                            <select class="form-control" 
-                                    id="projectType"
-                                    name="projectType"
-                                    onchange="toggleOtherInput('projectType', 'projectTypeOther')">
-                                <option value="">-- เลือกรูปแบบโครงการ --</option>
-                                <option value="โครงการสังคม">โครงการสังคม</option>
-                                <option value="โครงการเศรษฐกิจ">โครงการเศรษฐกิจ</option>
-                                <option value="โครงการสิ่งแวดล้อม">โครงการสิ่งแวดล้อม</option>
-                                <option value="โครงการผสม">โครงการผสม</option>
-                                <option value="other">อื่นๆ (ระบุ)</option>
-                            </select>
-                            <div class="other-input-container" id="projectTypeOther">
-                                <input type="text" 
-                                       class="form-control" 
-                                       id="projectTypeOtherValue"
-                                       name="projectTypeOther"
-                                       placeholder="ระบุรูปแบบโครงการ"
-                                       maxlength="200"
-                                       autocomplete="off">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="department">หน่วยงานที่รับผิดชอบ</label>
-                            <select class="form-control" 
-                                    id="department"
-                                    name="department"
-                                    onchange="toggleOtherInput('department', 'departmentOther')">
-                                <option value="">-- เลือกหน่วยงาน --</option>
-                                <!-- Options will be populated by JavaScript -->
-                                <option value="other">อื่นๆ (ระบุ)</option>
-                            </select>
-                            <div class="other-input-container" id="departmentOther">
-                                <input type="text" 
-                                       class="form-control" 
-                                       id="departmentOtherValue"
-                                       name="departmentOther"
-                                       placeholder="ระบุหน่วยงาน"
-                                       maxlength="300"
-                                       autocomplete="off">
-                            </div>
-                        </div>
-
-                        <div class="form-group full-width">
-                            <label class="form-label" for="strategy">ยุทธศาสตร์</label>
-                            <select class="form-control" 
-                                    id="strategy"
-                                    name="strategy"
-                                    onchange="toggleOtherInput('strategy', 'strategyOther')">
-                                <option value="">-- เลือกยุทธศาสตร์ --</option>
-                                <!-- Options will be populated by JavaScript -->
-                                <option value="other">อื่นๆ (ระบุ)</option>
-                            </select>
-                            <div class="other-input-container" id="strategyOther">
-                                <input type="text" 
-                                       class="form-control" 
-                                       id="strategyOtherValue"
-                                       name="strategyOther"
-                                       placeholder="ระบุยุทธศาสตร์"
-                                       maxlength="500"
-                                       autocomplete="off">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="evaluationType">รูปแบบการประเมิน</label>
-                            <select class="form-control" 
-                                    id="evaluationType"
-                                    name="evaluationType"
-                                    onchange="toggleOtherInput('evaluationType', 'evaluationTypeOther')">
-                                <option value="">-- เลือกรูปแบบการประเมิน --</option>
-                                <option value="ประเมินก่อนดำเนินโครงการ (Ex-Ante Evaluation)">ประเมินก่อนดำเนินโครงการ (Ex-Ante Evaluation)</option>
-                                <option value="ประเมินระหว่างดำเนินโครงการ (On-going Evaluation)">ประเมินระหว่างดำเนินโครงการ (On-going Evaluation)</option>
-                                <option value="ประเมินหลังดำเนินโครงการ (Ex-post Evaluation)">ประเมินหลังดำเนินโครงการ (Ex-post Evaluation)</option>
-                                <option value="other">อื่นๆ (ระบุ)</option>
-                            </select>
-                            <div class="other-input-container" id="evaluationTypeOther">
-                                <input type="text" 
-                                       class="form-control" 
-                                       id="evaluationTypeOtherValue"
-                                       name="evaluationTypeOther"
-                                       placeholder="ระบุรูปแบบการประเมิน"
-                                       maxlength="300"
-                                       autocomplete="off">
-                            </div>
-                        </div>
-
-                        <div class="form-group full-width">
-                            <label class="form-label" for="objectives">วัตถุประสงค์</label>
-                            <textarea class="form-control" 
-                                      id="objectives"
-                                      name="objectives"
-                                      placeholder="กรอกวัตถุประสงค์ของโครงการ"
-                                      maxlength="2000"
-                                      rows="4"></textarea>
-                        </div>
-
-                        <div class="form-group full-width">
-                            <label class="form-label" for="expectedResults">ผลผลิต</label>
-                            <textarea class="form-control" 
-                                      id="expectedResults"
-                                      name="expectedResults"
-                                      placeholder="กรอกผลผลิตของโครงการ"
-                                      maxlength="2000"
-                                      rows="4"></textarea>
-                        </div>
-
-                        <div class="form-group full-width">
-                            <label class="form-label">ระยะเวลาดำเนินโครงการ</label>
-                            <div class="date-range">
-                                <input type="date" 
-                                       class="form-control" 
-                                       id="startDate"
-                                       name="startDate"
-                                       aria-label="Start Date">
-                                <span>ถึง</span>
-                                <input type="date" 
-                                       class="form-control" 
-                                       id="endDate"
-                                       name="endDate"
-                                       aria-label="End Date">
-                            </div>
-                        </div>
-
-                        <div class="form-group full-width">
-                            <label class="form-label" for="proposalFile">ข้อเสนอโครงการ (ไฟล์ PDF เท่านั้น)</label>
-                            <div class="file-upload-container">
-                                <input type="file" 
-                                       class="form-control" 
-                                       id="proposalFile"
-                                       name="proposalFile"
-                                       accept=".pdf,application/pdf" 
-                                       onchange="validatePDF(this, 'proposal')">
-                                <small class="form-text text-muted"><i class="fas fa-info-circle" aria-hidden="true"></i> อัปโหลดไฟล์ .PDF เท่านั้น (ไม่บังคับ, ขนาดไม่เกิน 10MB)</small>
-                                <div id="proposalFilePreview" class="file-preview" style="display: none;">
-                                    <i class="fas fa-file-pdf text-danger" aria-hidden="true"></i>
-                                    <span id="proposalFileName"></span>
-                                    <button type="button" class="btn-remove-file" onclick="removeFile('proposal')" aria-label="Remove File">
-                                        <i class="fas fa-times" aria-hidden="true"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group full-width">
-                            <label class="form-label" for="reportFile">รายงานฉบับสมบูรณ์ (ไฟล์ PDF เท่านั้น)</label>
-                            <div class="file-upload-container">
-                                <input type="file" 
-                                       class="form-control" 
-                                       id="reportFile"
-                                       name="reportFile"
-                                       accept=".pdf,application/pdf" 
-                                       onchange="validatePDF(this, 'report')">
-                                <small class="form-text text-muted"><i class="fas fa-info-circle" aria-hidden="true"></i> อัปโหลดไฟล์ .PDF เท่านั้น (ไม่บังคับ, ขนาดไม่เกิน 10MB)</small>
-                                <div id="reportFilePreview" class="file-preview" style="display: none;">
-                                    <i class="fas fa-file-pdf text-danger" aria-hidden="true"></i>
-                                    <span id="reportFileName"></span>
-                                    <button type="button" class="btn-remove-file" onclick="removeFile('report')" aria-label="Remove File">
-                                        <i class="fas fa-times" aria-hidden="true"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group full-width">
-                            <label class="form-label" for="phoneNumber">เบอร์โทรติดต่อ <span class="required-star">*</span></label>
-                            <input type="tel" 
-                                   class="form-control" 
-                                   id="phoneNumber"
-                                   name="phoneNumber"
-                                   placeholder="กรอกเบอร์โทรติดต่อ เช่น 0812345678" 
-                                   required 
-                                   pattern="[0-9]{9,10}" 
-                                   maxlength="10"
-                                   inputmode="numeric"
-                                   autocomplete="tel"
-                                   aria-required="true">
-                            <small class="form-text text-muted"><i class="fas fa-info-circle" aria-hidden="true"></i> กรุณากรอกเบอร์โทรศัพท์ 9-10 หลัก (บังคับกรอก)</small>
+                    <div class="form-group">
+                        <label class="form-label">รูปแบบโครงการ</label>
+                        <select class="form-control" id="projectType" onchange="toggleOtherInput('projectType', 'projectTypeOther')">
+                            <option value="">-- เลือกรูปแบบโครงการ --</option>
+                            <option value="โครงการสังคม">โครงการสังคม</option>
+                            <option value="โครงการเศรษฐกิจ">โครงการเศรษฐกิจ</option>
+                            <option value="โครงการสิ่งแวดล้อม">โครงการสิ่งแวดล้อม</option>
+                            <option value="โครงการผสม">โครงการผสม</option>
+                            <option value="other">อื่นๆ (ระบุ)</option>
+                        </select>
+                        <div class="other-input-container" id="projectTypeOther">
+                            <input type="text" class="form-control" id="projectTypeOtherValue" placeholder="ระบุรูปแบบโครงการ">
                         </div>
                     </div>
-                </form>
+
+                    <div class="form-group">
+                        <label class="form-label">หน่วยงานที่รับผิดชอบ</label>
+                        <select class="form-control" id="department" onchange="toggleOtherInput('department', 'departmentOther')">
+                            <option value="">-- เลือกหน่วยงาน --</option>
+                            <!-- Options will be populated by JavaScript -->
+                            <option value="other">อื่นๆ (ระบุ)</option>
+                        </select>
+                        <div class="other-input-container" id="departmentOther">
+                            <input type="text" class="form-control" id="departmentOtherValue" placeholder="ระบุหน่วยงาน">
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label">ยุทธศาสตร์</label>
+                        <select class="form-control" id="strategy" onchange="toggleOtherInput('strategy', 'strategyOther')">
+                            <option value="">-- เลือกยุทธศาสตร์ --</option>
+                            <!-- Options will be populated by JavaScript -->
+                            <option value="other">อื่นๆ (ระบุ)</option>
+                        </select>
+                        <div class="other-input-container" id="strategyOther">
+                            <input type="text" class="form-control" id="strategyOtherValue" placeholder="ระบุยุทธศาสตร์">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">รูปแบบการประเมิน</label>
+                        <select class="form-control" id="evaluationType" onchange="toggleOtherInput('evaluationType', 'evaluationTypeOther')">
+                            <option value="">-- เลือกรูปแบบการประเมิน --</option>
+                            <option value="ประเมินก่อนดำเนินโครงการ (Ex-Ante Evaluation)">ประเมินก่อนดำเนินโครงการ (Ex-Ante Evaluation)</option>
+                            <option value="ประเมินระหว่างดำเนินโครงการ (On-going Evaluation)">ประเมินระหว่างดำเนินโครงการ (On-going Evaluation)</option>
+                            <option value="ประเมินหลังดำเนินโครงการ (Ex-post Evaluation)">ประเมินหลังดำเนินโครงการ (Ex-post Evaluation)</option>
+                            <option value="other">อื่นๆ (ระบุ)</option>
+                        </select>
+                        <div class="other-input-container" id="evaluationTypeOther">
+                            <input type="text" class="form-control" id="evaluationTypeOtherValue" placeholder="ระบุรูปแบบการประเมิน">
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label">วัตถุประสงค์</label>
+                        <textarea class="form-control" id="objectives" placeholder="กรอกวัตถุประสงค์ของโครงการ"></textarea>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label">ผลผลิต</label>
+                        <textarea class="form-control" id="expectedResults" placeholder="กรอกผลผลิตของโครงการ"></textarea>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label">ระยะเวลาดำเนินโครงการ</label>
+                        <div class="date-range">
+                            <input type="date" class="form-control" id="startDate">
+                            <span>ถึง</span>
+                            <input type="date" class="form-control" id="endDate">
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label">ข้อเสนอโครงการ (ไฟล์ PDF เท่านั้น)</label>
+                        <div class="file-upload-container">
+                            <input type="file" class="form-control" id="proposalFile" accept=".pdf" onchange="validatePDF(this, 'proposal')">
+                            <small class="form-text text-muted"><i class="fas fa-info-circle"></i> อัปโหลดไฟล์ .PDF เท่านั้น (ไม่บังคับ)</small>
+                            <div id="proposalFilePreview" class="file-preview" style="display: none;">
+                                <i class="fas fa-file-pdf text-danger"></i>
+                                <span id="proposalFileName"></span>
+                                <button type="button" class="btn-remove-file" onclick="removeFile('proposal')"><i class="fas fa-times"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label">รายงานฉบับสมบูรณ์ (ไฟล์ PDF เท่านั้น)</label>
+                        <div class="file-upload-container">
+                            <input type="file" class="form-control" id="reportFile" accept=".pdf" onchange="validatePDF(this, 'report')">
+                            <small class="form-text text-muted"><i class="fas fa-info-circle"></i> อัปโหลดไฟล์ .PDF เท่านั้น (ไม่บังคับ)</small>
+                            <div id="reportFilePreview" class="file-preview" style="display: none;">
+                                <i class="fas fa-file-pdf text-danger"></i>
+                                <span id="reportFileName"></span>
+                                <button type="button" class="btn-remove-file" onclick="removeFile('report')"><i class="fas fa-times"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label">เบอร์โทรติดต่อ <span class="required-star">*</span></label>
+                        <input type="tel" class="form-control" id="phoneNumber" placeholder="กรอกเบอร์โทรติดต่อ เช่น 0812345678" required pattern="[0-9]{9,10}" maxlength="10">
+                        <small class="form-text text-muted"><i class="fas fa-info-circle"></i> กรุณากรอกเบอร์โทรศัพท์ 9-10 หลัก (บังคับกรอก)</small>
+                    </div>
+                </div>
             </div>
 
             <div class="card">
                 <div class="card-header">
                     <div class="card-icon">
-                        <i class="fas fa-globe" aria-hidden="true"></i>
+                        <i class="fas fa-globe"></i>
                     </div>
                     <div>
                         <h2 class="card-title">เป้าหมายการพัฒนาที่ยั่งยืน (SDGs)</h2>
@@ -401,26 +234,26 @@
                     </div>
                 </div>
 
-                <div class="sdg-container" id="sdgContainer" role="group" aria-label="SDG Selection">
+                <div class="sdg-container" id="sdgContainer">
                     <!-- SDG checkboxes will be populated by JavaScript -->
                 </div>
             </div>
 
             <!-- Navigation Buttons -->
             <div class="section-nav end">
-                <button class="btn-nav btn-next" onclick="showSection('section2', document.querySelectorAll('.nav-tab')[1])" type="button">
-                    ถัดไป <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                <button class="btn-nav btn-next" onclick="showSection('section2', document.querySelectorAll('.nav-tab')[1])">
+                    ถัดไป <i class="fas fa-arrow-right"></i>
                 </button>
             </div>
         </section>
 
         <!-- Section 2: SROI Controller -->
-        <section id="section2" class="section" role="tabpanel" aria-labelledby="tab-section2">
+        <section id="section2" class="section">
             <!-- Stakeholders -->
             <div class="card">
                 <div class="card-header">
                     <div class="card-icon">
-                        <i class="fas fa-users" aria-hidden="true"></i>
+                        <i class="fas fa-users"></i>
                     </div>
                     <div>
                         <h2 class="card-title">Stakeholders (ผู้มีส่วนได้ส่วนเสีย)</h2>
@@ -429,29 +262,29 @@
                 </div>
 
                 <div class="add-btn-container">
-                    <button class="btn btn-primary" onclick="openStakeholderModal()" type="button">
-                        <i class="fas fa-plus" aria-hidden="true"></i> เพิ่ม Stakeholder
+                    <button class="btn btn-primary" onclick="openStakeholderModal()">
+                        <i class="fas fa-plus"></i> เพิ่ม Stakeholder
                     </button>
                 </div>
 
                 <div class="table-container">
-                    <table role="table" aria-label="Stakeholders Table">
+                    <table>
                         <thead>
                             <tr>
-                                <th scope="col" style="width: 50px;">#</th>
-                                <th scope="col">ชื่อ Stakeholder</th>
-                                <th scope="col">ประเภท</th>
-                                <th scope="col">จำนวน</th>
-                                <th scope="col">หน่วย</th>
-                                <th scope="col">รายละเอียด</th>
-                                <th scope="col" style="width: 100px;">จัดการ</th>
+                                <th style="width: 50px;">#</th>
+                                <th>ชื่อ Stakeholder</th>
+                                <th>ประเภท</th>
+                                <th>จำนวน</th>
+                                <th>หน่วย</th>
+                                <th>รายละเอียด</th>
+                                <th style="width: 100px;">จัดการ</th>
                             </tr>
                         </thead>
                         <tbody id="stakeholderTable">
                             <tr>
                                 <td colspan="7">
                                     <div class="empty-state">
-                                        <i class="fas fa-users" aria-hidden="true"></i>
+                                        <i class="fas fa-users"></i>
                                         <h3>ยังไม่มีข้อมูล Stakeholder</h3>
                                         <p>คลิกปุ่ม "เพิ่ม Stakeholder" เพื่อเริ่มต้น</p>
                                     </div>
@@ -466,7 +299,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-icon">
-                        <i class="fas fa-exchange-alt" aria-hidden="true"></i>
+                        <i class="fas fa-exchange-alt"></i>
                     </div>
                     <div>
                         <h2 class="card-title">Changes (การเปลี่ยนแปลง)</h2>
@@ -475,35 +308,35 @@
                 </div>
 
                 <div class="add-btn-container">
-                    <button class="btn btn-primary" onclick="openChangeModal()" type="button">
-                        <i class="fas fa-plus" aria-hidden="true"></i> เพิ่ม Change
+                    <button class="btn btn-primary" onclick="openChangeModal()">
+                        <i class="fas fa-plus"></i> เพิ่ม Change
                     </button>
                 </div>
 
                 <div class="table-container changes-table-container">
-                    <table id="changesTableWrapper" role="table" aria-label="Changes Table">
+                    <table id="changesTableWrapper">
                         <thead>
                             <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Stakeholder</th>
-                                <th scope="col">จำนวน/หน่วย</th>
-                                <th scope="col">Input</th>
-                                <th scope="col">มูลค่า Input</th>
-                                <th scope="col">ประเภท Outcome</th>
-                                <th scope="col">Outcome</th>
-                                <th scope="col">ตัวชี้วัด</th>
-                                <th scope="col">Financial Proxy</th>
-                                <th scope="col">มูลค่า Y0-Y5</th>
-                                <th scope="col">Adj.</th>
-                                <th scope="col">Drop</th>
-                                <th scope="col">จัดการ</th>
+                                <th>#</th>
+                                <th>Stakeholder</th>
+                                <th>จำนวน/หน่วย</th>
+                                <th>Input</th>
+                                <th>มูลค่า Input</th>
+                                <th>ประเภท Outcome</th>
+                                <th>Outcome</th>
+                                <th>ตัวชี้วัด</th>
+                                <th>Financial Proxy</th>
+                                <th>มูลค่า Y0-Y5</th>
+                                <th>Adj.</th>
+                                <th>Drop</th>
+                                <th>จัดการ</th>
                             </tr>
                         </thead>
                         <tbody id="changesTable">
                             <tr>
                                 <td colspan="13">
                                     <div class="empty-state">
-                                        <i class="fas fa-exchange-alt" aria-hidden="true"></i>
+                                        <i class="fas fa-exchange-alt"></i>
                                         <h3>ยังไม่มีข้อมูล Change</h3>
                                         <p>คลิกปุ่ม "เพิ่ม Change" เพื่อเริ่มต้น</p>
                                     </div>
@@ -516,21 +349,21 @@
 
             <!-- Navigation Buttons -->
             <div class="section-nav">
-                <button class="btn-nav btn-prev" onclick="showSection('section1', document.querySelectorAll('.nav-tab')[0])" type="button">
-                    <i class="fas fa-arrow-left" aria-hidden="true"></i> ย้อนกลับ
+                <button class="btn-nav btn-prev" onclick="showSection('section1', document.querySelectorAll('.nav-tab')[0])">
+                    <i class="fas fa-arrow-left"></i> ย้อนกลับ
                 </button>
-                <button class="btn-nav btn-next" onclick="showSection('section3', document.querySelectorAll('.nav-tab')[2])" type="button">
-                    ถัดไป <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                <button class="btn-nav btn-next" onclick="showSection('section3', document.querySelectorAll('.nav-tab')[2])">
+                    ถัดไป <i class="fas fa-arrow-right"></i>
                 </button>
             </div>
         </section>
 
         <!-- Section 3: ผลการคำนวณ -->
-        <section id="section3" class="section" role="tabpanel" aria-labelledby="tab-section3">
+        <section id="section3" class="section">
             <div class="card">
                 <div class="card-header">
                     <div class="card-icon">
-                        <i class="fas fa-calculator" aria-hidden="true"></i>
+                        <i class="fas fa-calculator"></i>
                     </div>
                     <div>
                         <h2 class="card-title">ผลการคำนวณ SROI</h2>
@@ -539,45 +372,45 @@
                 </div>
 
                 <div style="text-align: center; margin-bottom: 2rem;">
-                    <button class="btn btn-success btn-lg" onclick="calculateSROI()" type="button" style="padding: 1rem 3rem; font-size: 1.1rem;">
-                        <i class="fas fa-play" aria-hidden="true"></i> คำนวณ SROI
+                    <button class="btn btn-success btn-lg" onclick="calculateSROI()" style="padding: 1rem 3rem; font-size: 1.1rem;">
+                        <i class="fas fa-play"></i> คำนวณ SROI
                     </button>
                 </div>
 
                 <div class="results-grid">
                     <div class="result-card highlight">
                         <div class="result-icon">
-                            <i class="fas fa-chart-pie" aria-hidden="true"></i>
+                            <i class="fas fa-chart-pie"></i>
                         </div>
                         <div class="result-label">SROI Ratio</div>
-                        <div class="result-value" id="sroiRatio" aria-live="polite">-</div>
+                        <div class="result-value" id="sroiRatio">-</div>
                         <div class="result-unit">มูลค่าผลตอบแทนต่อเงินลงทุน 1 บาท</div>
                     </div>
 
                     <div class="result-card">
                         <div class="result-icon">
-                            <i class="fas fa-coins" aria-hidden="true"></i>
+                            <i class="fas fa-coins"></i>
                         </div>
                         <div class="result-label">Total Present Value</div>
-                        <div class="result-value" id="totalPV" aria-live="polite">-</div>
+                        <div class="result-value" id="totalPV">-</div>
                         <div class="result-unit">มูลค่าปัจจุบันรวม (บาท)</div>
                     </div>
 
                     <div class="result-card">
                         <div class="result-icon">
-                            <i class="fas fa-hand-holding-usd" aria-hidden="true"></i>
+                            <i class="fas fa-hand-holding-usd"></i>
                         </div>
                         <div class="result-label">Total Investment</div>
-                        <div class="result-value" id="totalInvestment" aria-live="polite">-</div>
+                        <div class="result-value" id="totalInvestment">-</div>
                         <div class="result-unit">เงินลงทุนรวม (บาท)</div>
                     </div>
 
                     <div class="result-card">
                         <div class="result-icon">
-                            <i class="fas fa-balance-scale" aria-hidden="true"></i>
+                            <i class="fas fa-balance-scale"></i>
                         </div>
                         <div class="result-label">Net Benefit</div>
-                        <div class="result-value" id="netBenefit" aria-live="polite">-</div>
+                        <div class="result-value" id="netBenefit">-</div>
                         <div class="result-unit">ผลต่างสุทธิของประโยชน์ (บาท)</div>
                     </div>
                 </div>
@@ -585,24 +418,24 @@
                 <!-- Outcome Mapping Table -->
                 <div class="card" style="background: white; margin-bottom: 1.5rem;">
                     <h3 style="margin-bottom: 1rem; color: var(--primary);">
-                        <i class="fas fa-map" aria-hidden="true"></i> Outcome Mapping
+                        <i class="fas fa-map"></i> Outcome Mapping
                     </h3>
                     <div class="table-container">
-                        <table role="table" aria-label="Outcome Mapping Table">
+                        <table>
                             <thead>
                                 <tr>
-                                    <th scope="col">ปัจจัยนำเข้า (Input)</th>
-                                    <th scope="col">กิจกรรม</th>
-                                    <th scope="col">ผลผลิต</th>
-                                    <th scope="col">ผู้มีส่วนได้ส่วนเสีย</th>
-                                    <th scope="col">ผลลัพธ์ (Outcome)</th>
+                                    <th>ปัจจัยนำเข้า (Input)</th>
+                                    <th>กิจกรรม</th>
+                                    <th>ผลผลิต</th>
+                                    <th>ผู้มีส่วนได้ส่วนเสีย</th>
+                                    <th>ผลลัพธ์ (Outcome)</th>
                                 </tr>
                             </thead>
                             <tbody id="outcomeMappingTable">
                                 <tr>
                                     <td colspan="5">
                                         <div class="empty-state" style="padding: 1rem;">
-                                            <i class="fas fa-info-circle" aria-hidden="true"></i>
+                                            <i class="fas fa-info-circle"></i>
                                             <p>กรุณาคำนวณ SROI เพื่อแสดงข้อมูล</p>
                                         </div>
                                     </td>
@@ -614,7 +447,7 @@
 
                 <div class="card" style="background: white;">
                     <h3 style="margin-bottom: 1rem; color: var(--primary);">
-                        <i class="fas fa-info-circle" aria-hidden="true"></i> สูตรการคำนวณ SROI
+                        <i class="fas fa-info-circle"></i> สูตรการคำนวณ SROI
                     </h3>
                     <div style="font-family: monospace; background: white; padding: 1.5rem; border-radius: 10px; overflow-x: auto;">
                         <p style="margin-bottom: 0.5rem;"><strong>SROI Ratio</strong> = Total Present Value / Total Investment</p>
@@ -627,21 +460,21 @@
 
             <!-- Navigation Buttons -->
             <div class="section-nav">
-                <button class="btn-nav btn-prev" onclick="showSection('section2', document.querySelectorAll('.nav-tab')[1])" type="button">
-                    <i class="fas fa-arrow-left" aria-hidden="true"></i> ย้อนกลับ
+                <button class="btn-nav btn-prev" onclick="showSection('section2', document.querySelectorAll('.nav-tab')[1])">
+                    <i class="fas fa-arrow-left"></i> ย้อนกลับ
                 </button>
-                <button class="btn-nav btn-next" onclick="showSection('section4', document.querySelectorAll('.nav-tab')[3])" type="button">
-                    ถัดไป <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                <button class="btn-nav btn-next" onclick="showSection('section4', document.querySelectorAll('.nav-tab')[3])">
+                    ถัดไป <i class="fas fa-arrow-right"></i>
                 </button>
             </div>
         </section>
 
         <!-- Section 4: สรุปผล -->
-        <section id="section4" class="section" role="tabpanel" aria-labelledby="tab-section4">
+        <section id="section4" class="section">
             <div class="card">
                 <div class="card-header">
                     <div class="card-icon">
-                        <i class="fas fa-award" aria-hidden="true"></i>
+                        <i class="fas fa-award"></i>
                     </div>
                     <div>
                         <h2 class="card-title">สรุปผลการประเมิน SROI</h2>
@@ -650,23 +483,23 @@
                 </div>
 
                 <div class="summary-actions">
-                    <button class="btn btn-gold" onclick="downloadCertificate()" type="button">
-                        <i class="fas fa-certificate" aria-hidden="true"></i> ดาวน์โหลดใบรับรอง (TH)
+                    <button class="btn btn-gold" onclick="downloadCertificate()">
+                        <i class="fas fa-certificate"></i> ดาวน์โหลดใบรับรอง (TH)
                     </button>
-                    <button class="btn btn-gold" onclick="downloadCertificateEN()" type="button" style="background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);">
-                        <i class="fas fa-certificate" aria-hidden="true"></i> Download Certificate (EN)
+                    <button class="btn btn-gold" onclick="downloadCertificateEN()" style="background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);">
+                        <i class="fas fa-certificate"></i> Download Certificate (EN)
                     </button>
-                    <button class="btn btn-success" onclick="exportToExcel()" type="button">
-                        <i class="fas fa-file-excel" aria-hidden="true"></i> ส่งออกข้อมูล Excel
+                    <button class="btn btn-success" onclick="exportToExcel()">
+                        <i class="fas fa-file-excel"></i> ส่งออกข้อมูล Excel
                     </button>
-                    <button class="btn btn-primary" onclick="printReport()" type="button">
-                        <i class="fas fa-print" aria-hidden="true"></i> พิมพ์รายงาน
+                    <button class="btn btn-primary" onclick="printReport()">
+                        <i class="fas fa-print"></i> พิมพ์รายงาน
                     </button>
                 </div>
 
-                <div id="summaryContent" style="margin-top: 2rem;" aria-live="polite">
+                <div id="summaryContent" style="margin-top: 2rem;">
                     <div class="empty-state">
-                        <i class="fas fa-clipboard-list" aria-hidden="true"></i>
+                        <i class="fas fa-clipboard-list"></i>
                         <h3>กรุณาคำนวณ SROI ก่อน</h3>
                         <p>ไปที่แท็บ "ผลการคำนวณ" และคลิกปุ่ม "คำนวณ SROI"</p>
                     </div>
@@ -675,540 +508,304 @@
 
             <!-- Navigation Buttons -->
             <div class="section-nav start">
-                <button class="btn-nav btn-prev" onclick="showSection('section3', document.querySelectorAll('.nav-tab')[2])" type="button">
-                    <i class="fas fa-arrow-left" aria-hidden="true"></i> ย้อนกลับ
+                <button class="btn-nav btn-prev" onclick="showSection('section3', document.querySelectorAll('.nav-tab')[2])">
+                    <i class="fas fa-arrow-left"></i> ย้อนกลับ
                 </button>
             </div>
         </section>
     </main>
 
     <!-- Stakeholder Modal -->
-    <div class="modal-overlay" id="stakeholderModal" role="dialog" aria-modal="true" aria-labelledby="stakeholderModalTitle">
+    <div class="modal-overlay" id="stakeholderModal">
         <div class="modal">
             <div class="modal-header">
                 <h3 class="modal-title" id="stakeholderModalTitle">เพิ่ม Stakeholder</h3>
-                <button class="modal-close" onclick="closeStakeholderModal()" type="button" aria-label="Close Modal">
-                    <i class="fas fa-times" aria-hidden="true"></i>
+                <button class="modal-close" onclick="closeStakeholderModal()">
+                    <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="stakeholderForm" onsubmit="return false;">
-                    <input type="hidden" id="stakeholderEditIndex" value="-1">
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="stakeholderName">ชื่อ Stakeholder <span class="required">*</span></label>
-                        <input type="text" 
-                               class="form-control" 
-                               id="stakeholderName"
-                               name="stakeholderName"
-                               placeholder="กรอกชื่อ Stakeholder"
-                               maxlength="300"
-                               autocomplete="off"
-                               required
-                               aria-required="true">
-                    </div>
+                <input type="hidden" id="stakeholderEditIndex" value="-1">
+                
+                <div class="form-group">
+                    <label class="form-label">ชื่อ Stakeholder <span class="required">*</span></label>
+                    <input type="text" class="form-control" id="stakeholderName" placeholder="กรอกชื่อ Stakeholder">
+                </div>
 
-                    <div class="form-group">
-                        <label class="form-label" for="stakeholderType">ประเภท</label>
-                        <select class="form-control" 
-                                id="stakeholderType"
-                                name="stakeholderType"
-                                onchange="toggleOtherInput('stakeholderType', 'stakeholderTypeOther')">
-                            <option value="">-- เลือกประเภท --</option>
-                            <option value="ผู้รับประโยชน์โดยตรง">ผู้รับประโยชน์โดยตรง</option>
-                            <option value="ผู้ดำเนินงานหลัก">ผู้ดำเนินงานหลัก</option>
-                            <option value="หน่วยงานสนับสนุนงบประมาณ">หน่วยงานสนับสนุนงบประมาณ</option>
-                            <option value="กลุ่ม/หน่วยงานที่เกี่ยวข้อง">กลุ่ม/หน่วยงานที่เกี่ยวข้อง</option>
+                <div class="form-group">
+                    <label class="form-label">ประเภท</label>
+                    <select class="form-control" id="stakeholderType" onchange="toggleOtherInput('stakeholderType', 'stakeholderTypeOther')">
+                        <option value="">-- เลือกประเภท --</option>
+                        <option value="ผู้รับประโยชน์โดยตรง">ผู้รับประโยชน์โดยตรง</option>
+                        <option value="ผู้ดำเนินงานหลัก">ผู้ดำเนินงานหลัก</option>
+                        <option value="หน่วยงานสนับสนุนงบประมาณ">หน่วยงานสนับสนุนงบประมาณ</option>
+                        <option value="กลุ่ม/หน่วยงานที่เกี่ยวข้อง">กลุ่ม/หน่วยงานที่เกี่ยวข้อง</option>
+                        <option value="other">อื่นๆ (ระบุ)</option>
+                    </select>
+                    <div class="other-input-container" id="stakeholderTypeOther">
+                        <input type="text" class="form-control" id="stakeholderTypeOtherValue" placeholder="ระบุประเภท">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">จำนวน</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="number" class="form-control" id="stakeholderCount" placeholder="0" min="0" style="flex: 1;">
+                        <select class="form-control" id="stakeholderUnit" style="flex: 1;" onchange="toggleOtherInput('stakeholderUnit', 'stakeholderUnitOther')">
+                            <option value="คน">คน</option>
+                            <option value="ชุมชน">ชุมชน</option>
+                            <option value="หน่วยงาน">หน่วยงาน</option>
                             <option value="other">อื่นๆ (ระบุ)</option>
                         </select>
-                        <div class="other-input-container" id="stakeholderTypeOther">
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="stakeholderTypeOtherValue"
-                                   name="stakeholderTypeOther"
-                                   placeholder="ระบุประเภท"
-                                   maxlength="200"
-                                   autocomplete="off">
-                        </div>
                     </div>
+                    <div class="other-input-container" id="stakeholderUnitOther">
+                        <input type="text" class="form-control" id="stakeholderUnitOtherValue" placeholder="ระบุหน่วย">
+                    </div>
+                </div>
 
-                    <div class="form-group">
-                        <label class="form-label" for="stakeholderCount">จำนวน</label>
-                        <div style="display: flex; gap: 10px;">
-                            <input type="number" 
-                                   class="form-control" 
-                                   id="stakeholderCount"
-                                   name="stakeholderCount"
-                                   placeholder="0" 
-                                   min="0"
-                                   max="999999999"
-                                   style="flex: 1;">
-                            <select class="form-control" 
-                                    id="stakeholderUnit"
-                                    name="stakeholderUnit"
-                                    style="flex: 1;" 
-                                    onchange="toggleOtherInput('stakeholderUnit', 'stakeholderUnitOther')">
-                                <option value="คน">คน</option>
-                                <option value="ชุมชน">ชุมชน</option>
-                                <option value="หน่วยงาน">หน่วยงาน</option>
-                                <option value="other">อื่นๆ (ระบุ)</option>
-                            </select>
-                        </div>
-                        <div class="other-input-container" id="stakeholderUnitOther">
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="stakeholderUnitOtherValue"
-                                   name="stakeholderUnitOther"
-                                   placeholder="ระบุหน่วย"
-                                   maxlength="100"
-                                   autocomplete="off">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="stakeholderDetail">รายละเอียด</label>
-                        <textarea class="form-control" 
-                                  id="stakeholderDetail"
-                                  name="stakeholderDetail"
-                                  placeholder="กรอกรายละเอียดเพิ่มเติม"
-                                  maxlength="1000"
-                                  rows="4"></textarea>
-                    </div>
-                </form>
+                <div class="form-group">
+                    <label class="form-label">รายละเอียด</label>
+                    <textarea class="form-control" id="stakeholderDetail" placeholder="กรอกรายละเอียดเพิ่มเติม"></textarea>
+                </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeStakeholderModal()" type="button">ยกเลิก</button>
-                <button class="btn btn-primary" onclick="saveStakeholder()" type="button">บันทึก</button>
+                <button class="btn btn-secondary" onclick="closeStakeholderModal()">ยกเลิก</button>
+                <button class="btn btn-primary" onclick="saveStakeholder()">บันทึก</button>
             </div>
         </div>
     </div>
 
     <!-- Change Modal -->
-    <div class="modal-overlay" id="changeModal" role="dialog" aria-modal="true" aria-labelledby="changeModalTitle">
+    <div class="modal-overlay" id="changeModal">
         <div class="modal" style="max-width: 900px;">
             <div class="modal-header">
                 <h3 class="modal-title" id="changeModalTitle">เพิ่ม Change</h3>
-                <button class="modal-close" onclick="closeChangeModal()" type="button" aria-label="Close Modal">
-                    <i class="fas fa-times" aria-hidden="true"></i>
+                <button class="modal-close" onclick="closeChangeModal()">
+                    <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="changeForm" onsubmit="return false;">
-                    <input type="hidden" id="changeEditIndex" value="-1">
-                    
+                <input type="hidden" id="changeEditIndex" value="-1">
+                
+                <div class="form-group">
+                    <label class="form-label">เลือก Stakeholder <span class="required">*</span></label>
+                    <select class="form-control" id="changeStakeholder">
+                        <option value="">-- เลือก Stakeholder --</option>
+                    </select>
+                </div>
+
+                <div class="sub-tabs">
+                    <button class="sub-tab active" onclick="showSubTab('inputTab', this)">
+                        <i class="fas fa-sign-in-alt"></i> Input
+                    </button>
+                    <button class="sub-tab" onclick="showSubTab('outcomeTab', this)">
+                        <i class="fas fa-sign-out-alt"></i> Outcome
+                    </button>
+                    <button class="sub-tab" onclick="showSubTab('adjustTab', this)">
+                        <i class="fas fa-sliders-h"></i> Adjust
+                    </button>
+                </div>
+
+                <!-- Input Tab -->
+                <div class="sub-content active" id="inputTab">
                     <div class="form-group">
-                        <label class="form-label" for="changeStakeholder">เลือก Stakeholder <span class="required">*</span></label>
-                        <select class="form-control" 
-                                id="changeStakeholder"
-                                name="changeStakeholder"
-                                required
-                                aria-required="true">
-                            <option value="">-- เลือก Stakeholder --</option>
-                        </select>
+                        <label class="form-label">ปัจจัยนำเข้า (Input)</label>
+                        <textarea class="form-control" id="inputDescription" placeholder="อธิบายปัจจัยนำเข้า"></textarea>
                     </div>
-
-                    <div class="sub-tabs" role="tablist">
-                        <button class="sub-tab active" onclick="showSubTab('inputTab', this)" type="button" role="tab" aria-selected="true">
-                            <i class="fas fa-sign-in-alt" aria-hidden="true"></i> Input
-                        </button>
-                        <button class="sub-tab" onclick="showSubTab('outcomeTab', this)" type="button" role="tab" aria-selected="false">
-                            <i class="fas fa-sign-out-alt" aria-hidden="true"></i> Outcome
-                        </button>
-                        <button class="sub-tab" onclick="showSubTab('adjustTab', this)" type="button" role="tab" aria-selected="false">
-                            <i class="fas fa-sliders-h" aria-hidden="true"></i> Adjust
-                        </button>
-                    </div>
-
-                    <!-- Input Tab -->
-                    <div class="sub-content active" id="inputTab" role="tabpanel">
-                        <div class="form-group">
-                            <label class="form-label" for="inputDescription">ปัจจัยนำเข้า (Input)</label>
-                            <textarea class="form-control" 
-                                      id="inputDescription"
-                                      name="inputDescription"
-                                      placeholder="อธิบายปัจจัยนำเข้า"
-                                      maxlength="2000"
-                                      rows="4"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">มูลค่าทางการเงิน Input (บาท)</label>
-                            <div class="year-grid">
-                                <div class="year-input">
-                                    <span class="year-label">Y0</span>
-                                    <input type="number" 
-                                           class="form-control" 
-                                           id="inputValueY0"
-                                           name="inputValueY0"
-                                           placeholder="0" 
-                                           min="0"
-                                           max="999999999999"
-                                           step="0.01">
-                                </div>
-                                <div class="year-input">
-                                    <span class="year-label">Y1</span>
-                                    <input type="number" 
-                                           class="form-control" 
-                                           id="inputValueY1"
-                                           name="inputValueY1"
-                                           placeholder="0" 
-                                           min="0"
-                                           max="999999999999"
-                                           step="0.01">
-                                </div>
-                                <div class="year-input">
-                                    <span class="year-label">Y2</span>
-                                    <input type="number" 
-                                           class="form-control" 
-                                           id="inputValueY2"
-                                           name="inputValueY2"
-                                           placeholder="0" 
-                                           min="0"
-                                           max="999999999999"
-                                           step="0.01">
-                                </div>
-                                <div class="year-input">
-                                    <span class="year-label">Y3</span>
-                                    <input type="number" 
-                                           class="form-control" 
-                                           id="inputValueY3"
-                                           name="inputValueY3"
-                                           placeholder="0" 
-                                           min="0"
-                                           max="999999999999"
-                                           step="0.01">
-                                </div>
-                                <div class="year-input">
-                                    <span class="year-label">Y4</span>
-                                    <input type="number" 
-                                           class="form-control" 
-                                           id="inputValueY4"
-                                           name="inputValueY4"
-                                           placeholder="0" 
-                                           min="0"
-                                           max="999999999999"
-                                           step="0.01">
-                                </div>
-                                <div class="year-input">
-                                    <span class="year-label">Y5</span>
-                                    <input type="number" 
-                                           class="form-control" 
-                                           id="inputValueY5"
-                                           name="inputValueY5"
-                                           placeholder="0" 
-                                           min="0"
-                                           max="999999999999"
-                                           step="0.01">
-                                </div>
+                    <div class="form-group">
+                        <label class="form-label">มูลค่าทางการเงิน Input (บาท)</label>
+                        <div class="year-grid">
+                            <div class="year-input">
+                                <span class="year-label">Y0</span>
+                                <input type="number" class="form-control" id="inputValueY0" placeholder="0" min="0" step="0.01">
                             </div>
-                            <small class="form-text text-muted"><i class="fas fa-info-circle" aria-hidden="true"></i> กรอกมูลค่าแยกตามปี (ไม่บังคับ) - ระบบจะรวมทั้งหมดเพื่อคำนวณ</small>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="inputAdditionalDetails">รายละเอียดเพิ่มเติม</label>
-                            <textarea class="form-control" 
-                                      id="inputAdditionalDetails"
-                                      name="inputAdditionalDetails"
-                                      placeholder="กรอกรายละเอียดเพิ่มเติม (ไม่บังคับ)"
-                                      maxlength="2000"
-                                      rows="3"></textarea>
-                        </div>
-                    </div>
-
-                    <!-- Outcome Tab -->
-                    <div class="sub-content" id="outcomeTab" role="tabpanel">
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label class="form-label" for="outcomeCategory">ประเภท Outcome</label>
-                                <select class="form-control" 
-                                        id="outcomeCategory"
-                                        name="outcomeCategory"
-                                        onchange="updateOutcomeOptions(); toggleOtherInput('outcomeCategory', 'outcomeCategoryOther')">
-                                    <option value="">-- เลือกประเภท --</option>
-                                    <option value="เศรษฐกิจ">เศรษฐกิจ</option>
-                                    <option value="สังคม">สังคม</option>
-                                    <option value="สิ่งแวดล้อม">สิ่งแวดล้อม</option>
-                                    <option value="other">อื่นๆ (ระบุ)</option>
-                                </select>
-                                <div class="other-input-container" id="outcomeCategoryOther">
-                                    <input type="text" 
-                                           class="form-control" 
-                                           id="outcomeCategoryOtherValue"
-                                           name="outcomeCategoryOther"
-                                           placeholder="ระบุประเภท Outcome"
-                                           maxlength="200"
-                                           autocomplete="off">
-                                </div>
+                            <div class="year-input">
+                                <span class="year-label">Y1</span>
+                                <input type="number" class="form-control" id="inputValueY1" placeholder="0" min="0" step="0.01">
                             </div>
+                            <div class="year-input">
+                                <span class="year-label">Y2</span>
+                                <input type="number" class="form-control" id="inputValueY2" placeholder="0" min="0" step="0.01">
+                            </div>
+                            <div class="year-input">
+                                <span class="year-label">Y3</span>
+                                <input type="number" class="form-control" id="inputValueY3" placeholder="0" min="0" step="0.01">
+                            </div>
+                            <div class="year-input">
+                                <span class="year-label">Y4</span>
+                                <input type="number" class="form-control" id="inputValueY4" placeholder="0" min="0" step="0.01">
+                            </div>
+                            <div class="year-input">
+                                <span class="year-label">Y5</span>
+                                <input type="number" class="form-control" id="inputValueY5" placeholder="0" min="0" step="0.01">
+                            </div>
+                        </div>
+                        <small class="form-text text-muted"><i class="fas fa-info-circle"></i> กรอกมูลค่าแยกตามปี (ไม่บังคับ) - ระบบจะรวมทั้งหมดเพื่อคำนวณ</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">รายละเอียดเพิ่มเติม</label>
+                        <textarea class="form-control" id="inputAdditionalDetails" placeholder="กรอกรายละเอียดเพิ่มเติม (ไม่บังคับ)"></textarea>
+                    </div>
+                </div>
 
-                            <div class="form-group">
-                                <label class="form-label" for="outcomeType">Outcome (ผลลัพธ์)</label>
-                                <select class="form-control" 
-                                        id="outcomeType"
-                                        name="outcomeType"
-                                        onchange="toggleOtherInput('outcomeType', 'outcomeTypeOther')">
-                                    <option value="">-- เลือก Outcome --</option>
-                                    <option value="other">อื่นๆ (ระบุ)</option>
-                                </select>
-                                <div class="other-input-container" id="outcomeTypeOther">
-                                    <input type="text" 
-                                           class="form-control" 
-                                           id="outcomeTypeOtherValue"
-                                           name="outcomeTypeOther"
-                                           placeholder="ระบุ Outcome"
-                                           maxlength="300"
-                                           autocomplete="off">
-                                </div>
+                <!-- Outcome Tab -->
+                <div class="sub-content" id="outcomeTab">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">ประเภท Outcome</label>
+                            <select class="form-control" id="outcomeCategory" onchange="updateOutcomeOptions(); toggleOtherInput('outcomeCategory', 'outcomeCategoryOther')">
+                                <option value="">-- เลือกประเภท --</option>
+                                <option value="เศรษฐกิจ">เศรษฐกิจ</option>
+                                <option value="สังคม">สังคม</option>
+                                <option value="สิ่งแวดล้อม">สิ่งแวดล้อม</option>
+                                <option value="other">อื่นๆ (ระบุ)</option>
+                            </select>
+                            <div class="other-input-container" id="outcomeCategoryOther">
+                                <input type="text" class="form-control" id="outcomeCategoryOtherValue" placeholder="ระบุประเภท Outcome">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="indicator">ตัวชี้วัด (Indicator)</label>
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="indicator"
-                                   name="indicator"
-                                   placeholder="กรอกตัวชี้วัด"
-                                   maxlength="500"
-                                   autocomplete="off">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="financialProxy">ค่าแทนทางการเงิน (Financial Proxy)</label>
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="financialProxy"
-                                   name="financialProxy"
-                                   placeholder="กรอกค่าแทนทางการเงิน"
-                                   maxlength="500"
-                                   autocomplete="off">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">มูลค่าทางการเงินตามปี (บาท)</label>
-                            <div class="year-grid">
-                                <div class="year-input">
-                                    <span class="year-label">Y0</span>
-                                    <input type="number" 
-                                           class="form-control" 
-                                           id="outcomeY0"
-                                           name="outcomeY0"
-                                           placeholder="0" 
-                                           min="0"
-                                           max="999999999999"
-                                           step="0.01">
-                                </div>
-                                <div class="year-input">
-                                    <span class="year-label">Y1</span>
-                                    <input type="number" 
-                                           class="form-control" 
-                                           id="outcomeY1"
-                                           name="outcomeY1"
-                                           placeholder="0" 
-                                           min="0"
-                                           max="999999999999"
-                                           step="0.01">
-                                </div>
-                                <div class="year-input">
-                                    <span class="year-label">Y2</span>
-                                    <input type="number" 
-                                           class="form-control" 
-                                           id="outcomeY2"
-                                           name="outcomeY2"
-                                           placeholder="0" 
-                                           min="0"
-                                           max="999999999999"
-                                           step="0.01">
-                                </div>
-                                <div class="year-input">
-                                    <span class="year-label">Y3</span>
-                                    <input type="number" 
-                                           class="form-control" 
-                                           id="outcomeY3"
-                                           name="outcomeY3"
-                                           placeholder="0" 
-                                           min="0"
-                                           max="999999999999"
-                                           step="0.01">
-                                </div>
-                                <div class="year-input">
-                                    <span class="year-label">Y4</span>
-                                    <input type="number" 
-                                           class="form-control" 
-                                           id="outcomeY4"
-                                           name="outcomeY4"
-                                           placeholder="0" 
-                                           min="0"
-                                           max="999999999999"
-                                           step="0.01">
-                                </div>
-                                <div class="year-input">
-                                    <span class="year-label">Y5</span>
-                                    <input type="number" 
-                                           class="form-control" 
-                                           id="outcomeY5"
-                                           name="outcomeY5"
-                                           placeholder="0" 
-                                           min="0"
-                                           max="999999999999"
-                                           step="0.01">
-                                </div>
+                            <label class="form-label">Outcome (ผลลัพธ์)</label>
+                            <select class="form-control" id="outcomeType" onchange="toggleOtherInput('outcomeType', 'outcomeTypeOther')">
+                                <option value="">-- เลือก Outcome --</option>
+                                <option value="other">อื่นๆ (ระบุ)</option>
+                            </select>
+                            <div class="other-input-container" id="outcomeTypeOther">
+                                <input type="text" class="form-control" id="outcomeTypeOtherValue" placeholder="ระบุ Outcome">
                             </div>
                         </div>
                     </div>
 
-                    <!-- Adjust Tab -->
-                    <div class="sub-content" id="adjustTab" role="tabpanel">
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label class="form-label" for="deadWeight">Dead Weight (ผลลัพธ์ส่วนเกิน)</label>
+                    <div class="form-group">
+                        <label class="form-label">ตัวชี้วัด (Indicator)</label>
+                        <input type="text" class="form-control" id="indicator" placeholder="กรอกตัวชี้วัด">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">ค่าแทนทางการเงิน (Financial Proxy)</label>
+                        <input type="text" class="form-control" id="financialProxy" placeholder="กรอกค่าแทนทางการเงิน">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">มูลค่าทางการเงินตามปี (บาท)</label>
+                        <div class="year-grid">
+                            <div class="year-input">
+                                <span class="year-label">Y0</span>
+                                <input type="number" class="form-control" id="outcomeY0" placeholder="0" min="0">
+                            </div>
+                            <div class="year-input">
+                                <span class="year-label">Y1</span>
+                                <input type="number" class="form-control" id="outcomeY1" placeholder="0" min="0">
+                            </div>
+                            <div class="year-input">
+                                <span class="year-label">Y2</span>
+                                <input type="number" class="form-control" id="outcomeY2" placeholder="0" min="0">
+                            </div>
+                            <div class="year-input">
+                                <span class="year-label">Y3</span>
+                                <input type="number" class="form-control" id="outcomeY3" placeholder="0" min="0">
+                            </div>
+                            <div class="year-input">
+                                <span class="year-label">Y4</span>
+                                <input type="number" class="form-control" id="outcomeY4" placeholder="0" min="0">
+                            </div>
+                            <div class="year-input">
+                                <span class="year-label">Y5</span>
+                                <input type="number" class="form-control" id="outcomeY5" placeholder="0" min="0">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Adjust Tab -->
+                <div class="sub-content" id="adjustTab">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Dead Weight (ผลลัพธ์ส่วนเกิน)</label>
+                            <div class="percent-input">
+                                <input type="number" class="form-control" id="deadWeight" placeholder="0" min="0" max="100" step="0.1">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Displacement (ผลลัพธ์ทดแทน)</label>
+                            <div class="percent-input">
+                                <input type="number" class="form-control" id="displacement" placeholder="0" min="0" max="100" step="0.1">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Attribution (ผลลัพธ์จากปัจจัยอื่น)</label>
+                            <div class="percent-input">
+                                <input type="number" class="form-control" id="attribution" placeholder="0" min="0" max="100" step="0.1">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Discount Rate (อัตราคิดลด)</label>
+                            <div class="percent-input">
+                                <input type="number" class="form-control" id="discountRate" placeholder="3.5" min="0" max="100" step="0.1">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Drop-off Rate (อัตราการลดลงรายปี)</label>
+                        <div class="year-grid">
+                            <div class="year-input">
+                                <span class="year-label">ปีที่ 1</span>
                                 <div class="percent-input">
-                                    <input type="number" 
-                                           class="form-control" 
-                                           id="deadWeight"
-                                           name="deadWeight"
-                                           placeholder="0" 
-                                           min="0" 
-                                           max="100" 
-                                           step="0.1">
+                                    <input type="number" class="form-control" id="dropoff1" placeholder="0" min="0" max="100" step="0.1">
                                 </div>
                             </div>
-
-                            <div class="form-group">
-                                <label class="form-label" for="displacement">Displacement (ผลลัพธ์ทดแทน)</label>
+                            <div class="year-input">
+                                <span class="year-label">ปีที่ 2</span>
                                 <div class="percent-input">
-                                    <input type="number" 
-                                           class="form-control" 
-                                           id="displacement"
-                                           name="displacement"
-                                           placeholder="0" 
-                                           min="0" 
-                                           max="100" 
-                                           step="0.1">
+                                    <input type="number" class="form-control" id="dropoff2" placeholder="0" min="0" max="100" step="0.1">
                                 </div>
                             </div>
-
-                            <div class="form-group">
-                                <label class="form-label" for="attribution">Attribution (ผลลัพธ์จากปัจจัยอื่น)</label>
+                            <div class="year-input">
+                                <span class="year-label">ปีที่ 3</span>
                                 <div class="percent-input">
-                                    <input type="number" 
-                                           class="form-control" 
-                                           id="attribution"
-                                           name="attribution"
-                                           placeholder="0" 
-                                           min="0" 
-                                           max="100" 
-                                           step="0.1">
+                                    <input type="number" class="form-control" id="dropoff3" placeholder="0" min="0" max="100" step="0.1">
                                 </div>
                             </div>
-
-                            <div class="form-group">
-                                <label class="form-label" for="discountRate">Discount Rate (อัตราคิดลด)</label>
+                            <div class="year-input">
+                                <span class="year-label">ปีที่ 4</span>
                                 <div class="percent-input">
-                                    <input type="number" 
-                                           class="form-control" 
-                                           id="discountRate"
-                                           name="discountRate"
-                                           placeholder="3.5" 
-                                           min="0" 
-                                           max="100" 
-                                           step="0.1">
+                                    <input type="number" class="form-control" id="dropoff4" placeholder="0" min="0" max="100" step="0.1">
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Drop-off Rate (อัตราการลดลงรายปี)</label>
-                            <div class="year-grid">
-                                <div class="year-input">
-                                    <span class="year-label">ปีที่ 1</span>
-                                    <div class="percent-input">
-                                        <input type="number" 
-                                               class="form-control" 
-                                               id="dropoff1"
-                                               name="dropoff1"
-                                               placeholder="0" 
-                                               min="0" 
-                                               max="100" 
-                                               step="0.1">
-                                    </div>
-                                </div>
-                                <div class="year-input">
-                                    <span class="year-label">ปีที่ 2</span>
-                                    <div class="percent-input">
-                                        <input type="number" 
-                                               class="form-control" 
-                                               id="dropoff2"
-                                               name="dropoff2"
-                                               placeholder="0" 
-                                               min="0" 
-                                               max="100" 
-                                               step="0.1">
-                                    </div>
-                                </div>
-                                <div class="year-input">
-                                    <span class="year-label">ปีที่ 3</span>
-                                    <div class="percent-input">
-                                        <input type="number" 
-                                               class="form-control" 
-                                               id="dropoff3"
-                                               name="dropoff3"
-                                               placeholder="0" 
-                                               min="0" 
-                                               max="100" 
-                                               step="0.1">
-                                    </div>
-                                </div>
-                                <div class="year-input">
-                                    <span class="year-label">ปีที่ 4</span>
-                                    <div class="percent-input">
-                                        <input type="number" 
-                                               class="form-control" 
-                                               id="dropoff4"
-                                               name="dropoff4"
-                                               placeholder="0" 
-                                               min="0" 
-                                               max="100" 
-                                               step="0.1">
-                                    </div>
-                                </div>
-                                <div class="year-input">
-                                    <span class="year-label">ปีที่ 5</span>
-                                    <div class="percent-input">
-                                        <input type="number" 
-                                               class="form-control" 
-                                               id="dropoff5"
-                                               name="dropoff5"
-                                               placeholder="0" 
-                                               min="0" 
-                                               max="100" 
-                                               step="0.1">
-                                    </div>
+                            <div class="year-input">
+                                <span class="year-label">ปีที่ 5</span>
+                                <div class="percent-input">
+                                    <input type="number" class="form-control" id="dropoff5" placeholder="0" min="0" max="100" step="0.1">
                                 </div>
                             </div>
                         </div>
                     </div>
-                </form>
+                </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeChangeModal()" type="button">ยกเลิก</button>
-                <button class="btn btn-primary" onclick="saveChange()" type="button">บันทึก</button>
+                <button class="btn btn-secondary" onclick="closeChangeModal()">ยกเลิก</button>
+                <button class="btn btn-primary" onclick="saveChange()">บันทึก</button>
             </div>
         </div>
     </div>
 
     <!-- Toast -->
-    <div class="toast" id="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <i class="fas fa-check-circle" aria-hidden="true"></i>
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
         <span id="toastMessage">บันทึกข้อมูลสำเร็จ</span>
     </div>
 
     <!-- Hidden Canvas for Certificate -->
-    <canvas id="certificateCanvas" style="display: none;" aria-hidden="true"></canvas>
+    <canvas id="certificateCanvas" style="display: none;"></canvas>
 
     </div>
 
-    <!-- Main JavaScript -->
     <script src="script.js"></script>
-    
     <footer class="footer-bar">
         <p>จัดทำโดย ศูนย์ส่งเสริมวิสาหกิจและสังคมยั่งยืน ฝ่ายส่งเสริมวิสาหกิจและสังคมยั่งยืน มหาวิทยาลัยขอนแก่น</p>
     </footer>
