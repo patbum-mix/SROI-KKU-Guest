@@ -1190,6 +1190,27 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(192, 57, 43, 0.5);
         }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .footer-bar {
+            margin-top: auto;
+            width: 100%;
+            background: linear-gradient(135deg, #8b2f1d 0%, #a73b24 30%, #c4512f 70%, #8b2f1d 100%);
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .footer-bar p {
+            margin: 0;
+            font-size: 14px;
+            font-family: sans-serif;
+        }
     </style>
 </head>
 <body>
@@ -4278,5 +4299,8 @@
             }
         }
     </script>
+    <footer class="footer-bar">
+        <p>จัดทำโดย ศูนย์ส่งเสริมวิสาหกิจและสังคมยั่งยืน ฝ่ายส่งเสริมวิสาหกิจและสังคมยั่งยืน มหาวิทยาลัยขอนแก่น</p>
+    </footer>
 </body>
 </html>
