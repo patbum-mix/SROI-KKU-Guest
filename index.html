@@ -1297,6 +1297,11 @@
 
                 <div class="form-grid">
                     <div class="form-group full-width">
+                        <label class="form-label">รหัสโครงการ</label>
+                        <input type="text" class="form-control" id="projectCode" placeholder="กรอกรหัสโครงการ">
+                    </div>
+
+                    <div class="form-group full-width">
                         <label class="form-label">ชื่อโครงการ <span class="required">*</span></label>
                         <input type="text" class="form-control" id="projectName" placeholder="กรอกชื่อโครงการ">
                     </div>
@@ -1314,6 +1319,23 @@
                     <div class="form-group">
                         <label class="form-label">งบประมาณโครงการ (บาท) <span class="required">*</span></label>
                         <input type="number" class="form-control" id="budget" placeholder="0.00" min="0" step="0.01">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">ประเภทต้นทุน</label>
+                        <select class="form-control" id="costType" onchange="toggleOtherInput('costType', 'costTypeOther')">
+                            <option value="">-- เลือกประเภทต้นทุน --</option>
+                            <option value="งบวิจัยจาก PMU">งบวิจัยจาก PMU</option>
+                            <option value="งบวิจัยร่วมจากผู้ประกอบการ/ภาคี">งบวิจัยร่วมจากผู้ประกอบการ/ภาคี</option>
+                            <option value="งบขับเคลื่อนขยายผล">งบขับเคลื่อนขยายผล</option>
+                            <option value="ค่าเสียโอกาสของนักวิจัย (ถ้ามี)">ค่าเสียโอกาสของนักวิจัย (ถ้ามี)</option>
+                            <option value="งบวิจัยของโครงการก่อนหน้าที่ใช้ผลการศึกษาต่อยอดในโครงการนี้ ในส่วนที่นำมาใช้ในโครงการนี้">งบวิจัยของโครงการก่อนหน้าที่ใช้ผลการศึกษาต่อยอดในโครงการนี้ ในส่วนที่นำมาใช้ในโครงการนี้</option>
+                            <option value="งบวิจัยจากแผนงาน FF">งบวิจัยจากแผนงาน FF</option>
+                            <option value="other">อื่นๆ (ระบุ)</option>
+                        </select>
+                        <div class="other-input-container" id="costTypeOther">
+                            <input type="text" class="form-control" id="costTypeOtherValue" placeholder="ระบุประเภทต้นทุน">
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -1366,6 +1388,20 @@
                         </select>
                         <div class="other-input-container" id="evaluationTypeOther">
                             <input type="text" class="form-control" id="evaluationTypeOtherValue" placeholder="ระบุรูปแบบการประเมิน">
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label">Utilization การนำผลงานวิจัยและนวัตกรรมไปใช้ประโยชน์</label>
+                        <select class="form-control" id="utilization" onchange="toggleOtherInput('utilization', 'utilizationOther')">
+                            <option value="">-- เลือกรูปแบบการนำไปใช้ประโยชน์ --</option>
+                            <option value="ด้านนโยบาย">ด้านนโยบาย - การนำผลการวิจัยไปใช้เป็นข้อมูลประกอบการตัดสินใจ การวางแผน หรือการแก้ปัญหาในระดับบริหารและภาครัฐ เพื่อกำหนดทิศทางหรือมาตรการต่างๆ ที่มีผลต่อส่วนรวม</option>
+                            <option value="ด้านพาณิชย์">ด้านพาณิชย์ - การนำผลการวิจัยไปสร้างมูลค่าเพิ่มทางเศรษฐกิจ</option>
+                            <option value="ด้านสาธารณะ (สังคม ชุมชนและพื้นที่)">ด้านสาธารณะ (สังคม ชุมชนและพื้นที่) - การนำผลงานวิจัยไปใช้เพื่อให้เกิดประโยชน์ต่อภาพรวมของสังคม ชุมชน และพื้นที่ โดยไม่ได้เฉพาะเจาะจงที่กลุ่มใดกลุ่มหนึ่ง</option>
+                            <option value="other">อื่นๆ (ระบุ)</option>
+                        </select>
+                        <div class="other-input-container" id="utilizationOther">
+                            <input type="text" class="form-control" id="utilizationOtherValue" placeholder="ระบุรูปแบบการนำไปใช้ประโยชน์">
                         </div>
                     </div>
 
@@ -3754,12 +3790,15 @@
         function resetForm() {
             if (confirm('ต้องการล้างข้อมูลทั้งหมดหรือไม่?')) {
                 document.getElementById('projectName').value = '';
+                document.getElementById('projectCode').value = '';
                 document.getElementById('recorderName').value = '';
                 document.getElementById('budget').value = '';
+                document.getElementById('costType').value = '';
                 document.getElementById('projectType').value = '';
                 document.getElementById('department').value = '';
                 document.getElementById('strategy').value = '';
                 document.getElementById('evaluationType').value = '';
+                document.getElementById('utilization').value = '';
                 document.getElementById('objectives').value = '';
                 document.getElementById('expectedResults').value = '';
                 document.getElementById('startDate').value = '';
