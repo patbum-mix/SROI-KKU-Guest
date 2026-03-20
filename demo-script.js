@@ -642,10 +642,10 @@ var DEMO_MODE = true;
                     <td>${s.detail}</td>
                     <td>
                         <div class="table-actions">
-                            <button class="btn-icon btn-edit" onclick="openStakeholderModal(${i})">
+                            <button class="btn-icon btn-edit" data-action="edit-stakeholder" data-index="${i}">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="btn-icon btn-delete" onclick="deleteStakeholder(${i})">
+                            <button class="btn-icon btn-delete" data-action="delete-stakeholder" data-index="${i}">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
@@ -665,19 +665,178 @@ var DEMO_MODE = true;
         }
 
         // ===== Change Modal =====
-        function updateChangeStakeholderDropdown() {
+        function updateChangeStakeholderDropdown(onlyWithChanges) {
             const select = document.getElementById('changeStakeholder');
             select.innerHTML = '<option value="">-- เลือก Stakeholder --</option>';
+            
+            var stakeholderHasChange = {};
+            if (onlyWithChanges) {
+                changes.forEach(function(c) {
+                    if (c.stakeholderIndex !== undefined && c.stakeholderIndex !== null) {
+                        stakeholderHasChange[c.stakeholderIndex] = true;
+                    }
+                });
+            }
+            
             stakeholders.forEach((s, i) => {
+                if (onlyWithChanges && !stakeholderHasChange[i]) return;
                 const option = document.createElement('option');
                 option.value = i;
                 option.textContent = s.name;
                 select.appendChild(option);
             });
+            
+            if (!document.getElementById('changeStakeholderInfo')) {
+                const info = document.createElement('div');
+                info.id = 'changeStakeholderInfo';
+                info.style.cssText = 'padding: 8px 12px; margin-top: 6px; background: #ebf4ff; border-radius: 8px; font-size: 0.85rem; color: #2c5282; display: none;';
+                select.parentNode.appendChild(info);
+            }
+        }
+
+        function updateChangeStakeholderInfo() {
+            var select = document.getElementById('changeStakeholder');
+            var info = document.getElementById('changeStakeholderInfo');
+            if (!info) return;
+            
+            var idx = select.value;
+            if (idx !== '' && stakeholders[idx]) {
+                var s = stakeholders[idx];
+                info.textContent = 'จำนวน: ' + (s.count || 0) + ' ' + (s.unit || 'คน');
+                info.style.display = 'block';
+            } else {
+                info.style.display = 'none';
+            }
+        }
+
+        function onChangeStakeholderChanged() {
+            updateChangeStakeholderInfo();
+            
+            var stakeholderIdx = document.getElementById('changeStakeholder').value;
+            if (stakeholderIdx === '') return;
+            
+            stakeholderIdx = parseInt(stakeholderIdx);
+            var editIndex = parseInt(document.getElementById('changeEditIndex').value);
+            
+            var foundChange = null;
+            
+            if (editIndex >= 0 && changes[editIndex] && changes[editIndex].stakeholderIndex === stakeholderIdx) {
+                foundChange = changes[editIndex];
+            } else {
+                for (var i = 0; i < changes.length; i++) {
+                    if (i === editIndex) continue;
+                    if (changes[i].stakeholderIndex === stakeholderIdx) {
+                        foundChange = changes[i];
+                        break;
+                    }
+                }
+            }
+            
+            if (foundChange) {
+                var input = foundChange.input || {};
+                document.getElementById('inputDescription').value = input.description || '';
+                document.getElementById('inputValueY0').value = input.valueY0 || '';
+                document.getElementById('inputValueY1').value = input.valueY1 || '';
+                document.getElementById('inputValueY2').value = input.valueY2 || '';
+                document.getElementById('inputValueY3').value = input.valueY3 || '';
+                document.getElementById('inputValueY4').value = input.valueY4 || '';
+                document.getElementById('inputValueY5').value = input.valueY5 || '';
+                document.getElementById('inputAdditionalDetails').value = input.additionalDetails || '';
+                
+                var outcome = foundChange.outcome || {};
+                var values = outcome.values || {};
+                
+                document.getElementById('outcomeCategoryOther').classList.remove('show');
+                document.getElementById('outcomeCategoryOtherValue').value = '';
+                document.getElementById('outcomeTypeOther').classList.remove('show');
+                document.getElementById('outcomeTypeOtherValue').value = '';
+                
+                if (['เศรษฐกิจ', 'สังคม', 'สิ่งแวดล้อม'].includes(outcome.category)) {
+                    document.getElementById('outcomeCategory').value = outcome.category;
+                    updateOutcomeOptions();
+                } else if (outcome.category) {
+                    document.getElementById('outcomeCategory').value = 'other';
+                    document.getElementById('outcomeCategoryOtherValue').value = outcome.category;
+                    document.getElementById('outcomeCategoryOther').classList.add('show');
+                } else {
+                    document.getElementById('outcomeCategory').value = '';
+                }
+                
+                setTimeout(function() {
+                    var outcomeSelect = document.getElementById('outcomeType');
+                    var found = false;
+                    for (var j = 0; j < outcomeSelect.options.length; j++) {
+                        if (outcomeSelect.options[j].value === outcome.type) {
+                            outcomeSelect.value = outcome.type;
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found && outcome.type) {
+                        outcomeSelect.value = 'other';
+                        document.getElementById('outcomeTypeOtherValue').value = outcome.type;
+                        document.getElementById('outcomeTypeOther').classList.add('show');
+                    }
+                }, 100);
+                
+                document.getElementById('indicator').value = outcome.indicator || '';
+                document.getElementById('financialProxy').value = outcome.financialProxy || '';
+                document.getElementById('outcomeY0').value = values.Y0 || '';
+                document.getElementById('outcomeY1').value = values.Y1 || '';
+                document.getElementById('outcomeY2').value = values.Y2 || '';
+                document.getElementById('outcomeY3').value = values.Y3 || '';
+                document.getElementById('outcomeY4').value = values.Y4 || '';
+                document.getElementById('outcomeY5').value = values.Y5 || '';
+                
+                var adjust = foundChange.adjust || {};
+                var dropoff = adjust.dropoff || [0, 0, 0, 0, 0];
+                
+                document.getElementById('deadWeight').value = adjust.deadWeight || '';
+                document.getElementById('displacement').value = adjust.displacement || '';
+                document.getElementById('attribution').value = adjust.attribution || '';
+                document.getElementById('discountRate').value = adjust.discountRate || '3.5';
+                document.getElementById('dropoff1').value = dropoff[0] || '';
+                document.getElementById('dropoff2').value = dropoff[1] || '';
+                document.getElementById('dropoff3').value = dropoff[2] || '';
+                document.getElementById('dropoff4').value = dropoff[3] || '';
+                document.getElementById('dropoff5').value = dropoff[4] || '';
+            } else {
+                document.getElementById('inputDescription').value = '';
+                document.getElementById('inputValueY0').value = '';
+                document.getElementById('inputValueY1').value = '';
+                document.getElementById('inputValueY2').value = '';
+                document.getElementById('inputValueY3').value = '';
+                document.getElementById('inputValueY4').value = '';
+                document.getElementById('inputValueY5').value = '';
+                document.getElementById('inputAdditionalDetails').value = '';
+                document.getElementById('outcomeCategory').value = '';
+                document.getElementById('outcomeCategoryOther').classList.remove('show');
+                document.getElementById('outcomeCategoryOtherValue').value = '';
+                document.getElementById('outcomeType').innerHTML = '<option value="">-- เลือก Outcome --</option><option value="other">อื่นๆ (ระบุ)</option>';
+                document.getElementById('outcomeTypeOther').classList.remove('show');
+                document.getElementById('outcomeTypeOtherValue').value = '';
+                document.getElementById('indicator').value = '';
+                document.getElementById('financialProxy').value = '';
+                document.getElementById('outcomeY0').value = '';
+                document.getElementById('outcomeY1').value = '';
+                document.getElementById('outcomeY2').value = '';
+                document.getElementById('outcomeY3').value = '';
+                document.getElementById('outcomeY4').value = '';
+                document.getElementById('outcomeY5').value = '';
+                document.getElementById('deadWeight').value = '';
+                document.getElementById('displacement').value = '';
+                document.getElementById('attribution').value = '';
+                document.getElementById('discountRate').value = '3.5';
+                document.getElementById('dropoff1').value = '';
+                document.getElementById('dropoff2').value = '';
+                document.getElementById('dropoff3').value = '';
+                document.getElementById('dropoff4').value = '';
+                document.getElementById('dropoff5').value = '';
+            }
         }
 
         function openChangeModal(editIndex = -1) {
-            updateChangeStakeholderDropdown();
+            updateChangeStakeholderDropdown(editIndex >= 0);
             document.getElementById('changeModal').classList.add('show');
             document.getElementById('changeEditIndex').value = editIndex;
             
@@ -696,6 +855,7 @@ var DEMO_MODE = true;
                 const dropoff = adjust.dropoff || [0, 0, 0, 0, 0];
                 
                 document.getElementById('changeStakeholder').value = (c.stakeholderIndex !== undefined && c.stakeholderIndex !== null) ? c.stakeholderIndex : '';
+                updateChangeStakeholderInfo();
                 document.getElementById('inputDescription').value = input.description || '';
                 document.getElementById('inputValueY0').value = input.valueY0 || '';
                 document.getElementById('inputValueY1').value = input.valueY1 || '';
@@ -763,6 +923,7 @@ var DEMO_MODE = true;
 
         function clearChangeForm() {
             document.getElementById('changeStakeholder').value = '';
+            updateChangeStakeholderInfo();
             document.getElementById('inputDescription').value = '';
             document.getElementById('inputValueY0').value = '';
             document.getElementById('inputValueY1').value = '';
@@ -963,10 +1124,10 @@ var DEMO_MODE = true;
                     </td>
                     <td>
                         <div class="table-actions">
-                            <button class="btn-icon btn-edit" onclick="openChangeModal(${i})">
+                            <button class="btn-icon btn-edit" data-action="edit-change" data-index="${i}">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="btn-icon btn-delete" onclick="deleteChange(${i})">
+                            <button class="btn-icon btn-delete" data-action="delete-change" data-index="${i}">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
@@ -2152,6 +2313,44 @@ var DEMO_MODE = true;
             initializeDatePickers();
             setDefaultDate();
             loadSavedData();
+            
+            // Event delegation: Stakeholder table
+            var stakeholderTableEl = document.getElementById('stakeholderTable');
+            if (stakeholderTableEl) {
+                stakeholderTableEl.addEventListener('click', function(e) {
+                    var btn = e.target.closest('button[data-action]');
+                    if (!btn) return;
+                    var action = btn.getAttribute('data-action');
+                    var index = parseInt(btn.getAttribute('data-index'));
+                    if (action === 'edit-stakeholder') {
+                        openStakeholderModal(index);
+                    } else if (action === 'delete-stakeholder') {
+                        deleteStakeholder(index);
+                    }
+                });
+            }
+            
+            // Event delegation: Changes table
+            var changesTableEl = document.getElementById('changesTable');
+            if (changesTableEl) {
+                changesTableEl.addEventListener('click', function(e) {
+                    var btn = e.target.closest('button[data-action]');
+                    if (!btn) return;
+                    var action = btn.getAttribute('data-action');
+                    var index = parseInt(btn.getAttribute('data-index'));
+                    if (action === 'edit-change') {
+                        openChangeModal(index);
+                    } else if (action === 'delete-change') {
+                        deleteChange(index);
+                    }
+                });
+            }
+            
+            // Change Stakeholder dropdown
+            var changeStakeholderSelect = document.getElementById('changeStakeholder');
+            if (changeStakeholderSelect) {
+                changeStakeholderSelect.addEventListener('change', onChangeStakeholderChanged);
+            }
         });
         
         // แสดง Demo Banner
