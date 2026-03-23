@@ -1040,6 +1040,10 @@
                 grid-template-columns: repeat(2, 1fr);
             }
 
+            .sdg-item {
+                min-height: 60px;
+            }
+
             .section-nav {
                 flex-direction: column;
                 gap: 0.5rem;
