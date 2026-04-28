@@ -316,7 +316,7 @@ var DEMO_MODE = true;
             yearSelect.style.cssText = 'flex: 1.5; min-width: 90px;';
             const currentYearBE = new Date().getFullYear() + 543;
             yearSelect.innerHTML = '<option value="">ปี พ.ศ.</option>';
-            for (let i = currentYearBE + 5; i >= currentYearBE - 20; i--) {
+            for (let i = 2700; i >= 2500; i--) {
                 yearSelect.innerHTML += `<option value="${i}">${i}</option>`;
             }
             
