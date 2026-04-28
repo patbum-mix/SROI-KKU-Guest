@@ -678,8 +678,8 @@ var DEMO_MODE = true;
 
         function generateYearOptions(selected) {
             var currentBE = new Date().getFullYear() + 543;
-            var startYear = currentBE - 5;
-            var endYear = currentBE + 10;
+            var startYear = 2500;
+            var endYear = 2700;
             var html = '<option value="">-- ปี พ.ศ. --</option>';
             for (var y = startYear; y <= endYear; y++) {
                 html += '<option value="' + y + '"' + (y == selected ? ' selected' : '') + '>' + y + '</option>';
