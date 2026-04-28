@@ -665,6 +665,131 @@ var DEMO_MODE = true;
         }
 
         // ===== Change Modal =====
+        // ===== Dynamic Year Row Functions =====
+        function getProjectStartYear() {
+            var startDate = document.getElementById('startDate').value;
+            if (startDate) {
+                var year = parseInt(startDate.split('-')[0]);
+                if (year < 2500) year += 543; // แปลง ค.ศ. เป็น พ.ศ.
+                return year;
+            }
+            return new Date().getFullYear() + 543;
+        }
+
+        function generateYearOptions(selected) {
+            var currentBE = new Date().getFullYear() + 543;
+            var startYear = currentBE - 5;
+            var endYear = currentBE + 10;
+            var html = '<option value="">-- ปี พ.ศ. --</option>';
+            for (var y = startYear; y <= endYear; y++) {
+                html += '<option value="' + y + '"' + (y == selected ? ' selected' : '') + '>' + y + '</option>';
+            }
+            return html;
+        }
+
+        function addYearRow(containerId, year, value, type) {
+            var container = document.getElementById(containerId);
+            var row = document.createElement('div');
+            row.className = 'year-row';
+            
+            var placeholder = type === 'dropoff' ? '0' : '0.00';
+            var step = type === 'dropoff' ? '0.1' : '0.01';
+            var max = type === 'dropoff' ? ' max="100"' : '';
+            var suffix = type === 'dropoff' ? '<span class="year-row-suffix">%</span>' : '';
+            
+            var inputEvent = '';
+            if (type === 'input') inputEvent = ' oninput="updateInputTotal()"';
+            
+            row.innerHTML = '<select class="form-control year-select" onchange="">' + generateYearOptions(year) + '</select>' +
+                '<input type="number" class="form-control year-value" placeholder="' + placeholder + '" min="0"' + max + ' step="' + step + '" value="' + (value || '') + '"' + inputEvent + '>' +
+                suffix +
+                '<button type="button" class="btn-remove-year" onclick="removeYearRow(this, \'' + type + '\')"><i class="fas fa-times"></i></button>';
+            
+            container.appendChild(row);
+        }
+
+        function removeYearRow(btn, type) {
+            btn.closest('.year-row').remove();
+            if (type === 'input') updateInputTotal();
+        }
+
+        function getYearsData(containerId) {
+            var container = document.getElementById(containerId);
+            var rows = container.querySelectorAll('.year-row');
+            var data = [];
+            rows.forEach(function(row) {
+                var year = parseInt(row.querySelector('.year-select').value) || 0;
+                var value = parseFloat(row.querySelector('.year-value').value) || 0;
+                if (year > 0) {
+                    data.push({ year: year, value: value });
+                }
+            });
+            return data.sort(function(a, b) { return a.year - b.year; });
+        }
+
+        function updateInputTotal() {
+            var data = getYearsData('inputYearsContainer');
+            var total = data.reduce(function(sum, d) { return sum + d.value; }, 0);
+            var el = document.getElementById('inputTotalValue');
+            if (el) el.textContent = total.toLocaleString('th-TH', { minimumFractionDigits: 2 });
+        }
+
+        function updateAutoCalc() {
+            var qty = parseFloat(document.getElementById('outcomeQuantity').value) || 0;
+            var proxy = parseFloat(document.getElementById('financialProxyValue').value) || 0;
+            var result = qty * proxy;
+            
+            var unitLabel = document.getElementById('outcomeUnitLabel');
+            var unit = unitLabel ? unitLabel.textContent : 'คน';
+            
+            document.getElementById('calcQuantity').textContent = qty.toLocaleString();
+            document.getElementById('calcUnit').textContent = unit;
+            document.getElementById('calcProxy').textContent = proxy.toLocaleString();
+            document.getElementById('calcResult').textContent = result.toLocaleString('th-TH', { minimumFractionDigits: 2 });
+        }
+
+        function updateOutcomeUnitLabel() {
+            var stakeholderIdx = document.getElementById('changeStakeholder').value;
+            var unitLabel = document.getElementById('outcomeUnitLabel');
+            if (stakeholderIdx !== '' && stakeholders[stakeholderIdx]) {
+                unitLabel.textContent = stakeholders[stakeholderIdx].unit || 'คน';
+            } else {
+                unitLabel.textContent = 'คน';
+            }
+            document.getElementById('calcUnit').textContent = unitLabel.textContent;
+        }
+
+        function migrateOldYearData(oldValues, startYear, keys) {
+            var years = [];
+            keys.forEach(function(key, idx) {
+                var val = oldValues[key] || 0;
+                if (val > 0) {
+                    years.push({ year: startYear + idx, value: val });
+                }
+            });
+            return years;
+        }
+
+        function migrateOldDropoff(dropoffArr, startYear) {
+            var years = [];
+            dropoffArr.forEach(function(rate, idx) {
+                if (rate > 0) {
+                    years.push({ year: startYear + idx + 1, value: rate });
+                }
+            });
+            return years;
+        }
+
+        function loadYearsToContainer(containerId, yearsData, type) {
+            var container = document.getElementById(containerId);
+            container.innerHTML = '';
+            if (yearsData && yearsData.length > 0) {
+                yearsData.forEach(function(d) {
+                    addYearRow(containerId, d.year, d.value, type);
+                });
+            }
+        }
+
         function updateChangeStakeholderDropdown(onlyWithChanges) {
             const select = document.getElementById('changeStakeholder');
             select.innerHTML = '<option value="">-- เลือก Stakeholder --</option>';
@@ -711,6 +836,7 @@ var DEMO_MODE = true;
 
         function onChangeStakeholderChanged() {
             updateChangeStakeholderInfo();
+            updateOutcomeUnitLabel();
             
             var stakeholderIdx = document.getElementById('changeStakeholder').value;
             if (stakeholderIdx === '') return;
@@ -734,17 +860,19 @@ var DEMO_MODE = true;
             
             if (foundChange) {
                 var input = foundChange.input || {};
+                var startYear = getProjectStartYear();
                 document.getElementById('inputDescription').value = input.description || '';
-                document.getElementById('inputValueY0').value = input.valueY0 || '';
-                document.getElementById('inputValueY1').value = input.valueY1 || '';
-                document.getElementById('inputValueY2').value = input.valueY2 || '';
-                document.getElementById('inputValueY3').value = input.valueY3 || '';
-                document.getElementById('inputValueY4').value = input.valueY4 || '';
-                document.getElementById('inputValueY5').value = input.valueY5 || '';
                 document.getElementById('inputAdditionalDetails').value = input.additionalDetails || '';
                 
+                // Load input years
+                var inputYears = input.years || [];
+                if (inputYears.length === 0 && (input.valueY0 || input.valueY1)) {
+                    inputYears = migrateOldYearData(input, startYear, ['valueY0','valueY1','valueY2','valueY3','valueY4','valueY5']);
+                }
+                loadYearsToContainer('inputYearsContainer', inputYears, 'input');
+                updateInputTotal();
+                
                 var outcome = foundChange.outcome || {};
-                var values = outcome.values || {};
                 
                 document.getElementById('outcomeCategoryOther').classList.remove('show');
                 document.getElementById('outcomeCategoryOtherValue').value = '';
@@ -781,34 +909,34 @@ var DEMO_MODE = true;
                 
                 document.getElementById('indicator').value = outcome.indicator || '';
                 document.getElementById('financialProxy').value = outcome.financialProxy || '';
-                document.getElementById('outcomeY0').value = values.Y0 || '';
-                document.getElementById('outcomeY1').value = values.Y1 || '';
-                document.getElementById('outcomeY2').value = values.Y2 || '';
-                document.getElementById('outcomeY3').value = values.Y3 || '';
-                document.getElementById('outcomeY4').value = values.Y4 || '';
-                document.getElementById('outcomeY5').value = values.Y5 || '';
+                document.getElementById('financialProxyValue').value = outcome.financialProxyValue || '';
+                document.getElementById('outcomeQuantity').value = outcome.quantity || '';
+                
+                // Load outcome years
+                var outcomeYears = outcome.years || [];
+                if (outcomeYears.length === 0 && outcome.values) {
+                    outcomeYears = migrateOldYearData(outcome.values, startYear, ['Y0','Y1','Y2','Y3','Y4','Y5']);
+                }
+                loadYearsToContainer('outcomeYearsContainer', outcomeYears, 'outcome');
+                updateAutoCalc();
                 
                 var adjust = foundChange.adjust || {};
-                var dropoff = adjust.dropoff || [0, 0, 0, 0, 0];
-                
                 document.getElementById('deadWeight').value = adjust.deadWeight || '';
                 document.getElementById('displacement').value = adjust.displacement || '';
                 document.getElementById('attribution').value = adjust.attribution || '';
                 document.getElementById('discountRate').value = adjust.discountRate || '3.5';
-                document.getElementById('dropoff1').value = dropoff[0] || '';
-                document.getElementById('dropoff2').value = dropoff[1] || '';
-                document.getElementById('dropoff3').value = dropoff[2] || '';
-                document.getElementById('dropoff4').value = dropoff[3] || '';
-                document.getElementById('dropoff5').value = dropoff[4] || '';
+                
+                // Load dropoff years
+                var dropoffYears = adjust.dropoffYears || [];
+                if (dropoffYears.length === 0 && adjust.dropoff && Array.isArray(adjust.dropoff)) {
+                    dropoffYears = migrateOldDropoff(adjust.dropoff, startYear);
+                }
+                loadYearsToContainer('dropoffYearsContainer', dropoffYears, 'dropoff');
             } else {
                 document.getElementById('inputDescription').value = '';
-                document.getElementById('inputValueY0').value = '';
-                document.getElementById('inputValueY1').value = '';
-                document.getElementById('inputValueY2').value = '';
-                document.getElementById('inputValueY3').value = '';
-                document.getElementById('inputValueY4').value = '';
-                document.getElementById('inputValueY5').value = '';
                 document.getElementById('inputAdditionalDetails').value = '';
+                document.getElementById('inputYearsContainer').innerHTML = '';
+                updateInputTotal();
                 document.getElementById('outcomeCategory').value = '';
                 document.getElementById('outcomeCategoryOther').classList.remove('show');
                 document.getElementById('outcomeCategoryOtherValue').value = '';
@@ -817,21 +945,15 @@ var DEMO_MODE = true;
                 document.getElementById('outcomeTypeOtherValue').value = '';
                 document.getElementById('indicator').value = '';
                 document.getElementById('financialProxy').value = '';
-                document.getElementById('outcomeY0').value = '';
-                document.getElementById('outcomeY1').value = '';
-                document.getElementById('outcomeY2').value = '';
-                document.getElementById('outcomeY3').value = '';
-                document.getElementById('outcomeY4').value = '';
-                document.getElementById('outcomeY5').value = '';
+                document.getElementById('financialProxyValue').value = '';
+                document.getElementById('outcomeQuantity').value = '';
+                document.getElementById('outcomeYearsContainer').innerHTML = '';
+                updateAutoCalc();
                 document.getElementById('deadWeight').value = '';
                 document.getElementById('displacement').value = '';
                 document.getElementById('attribution').value = '';
                 document.getElementById('discountRate').value = '3.5';
-                document.getElementById('dropoff1').value = '';
-                document.getElementById('dropoff2').value = '';
-                document.getElementById('dropoff3').value = '';
-                document.getElementById('dropoff4').value = '';
-                document.getElementById('dropoff5').value = '';
+                document.getElementById('dropoffYearsContainer').innerHTML = '';
             }
         }
 
@@ -846,25 +968,26 @@ var DEMO_MODE = true;
             if (editIndex >= 0) {
                 document.getElementById('changeModalTitle').textContent = 'แก้ไข Change';
                 const c = changes[editIndex];
-                
-                // ป้องกัน error กรณีข้อมูลไม่ครบ
                 const input = c.input || {};
                 const outcome = c.outcome || {};
-                const values = outcome.values || {};
                 const adjust = c.adjust || {};
-                const dropoff = adjust.dropoff || [0, 0, 0, 0, 0];
+                var startYear = getProjectStartYear();
                 
                 document.getElementById('changeStakeholder').value = (c.stakeholderIndex !== undefined && c.stakeholderIndex !== null) ? c.stakeholderIndex : '';
                 updateChangeStakeholderInfo();
-                document.getElementById('inputDescription').value = input.description || '';
-                document.getElementById('inputValueY0').value = input.valueY0 || '';
-                document.getElementById('inputValueY1').value = input.valueY1 || '';
-                document.getElementById('inputValueY2').value = input.valueY2 || '';
-                document.getElementById('inputValueY3').value = input.valueY3 || '';
-                document.getElementById('inputValueY4').value = input.valueY4 || '';
-                document.getElementById('inputValueY5').value = input.valueY5 || '';
-                document.getElementById('inputAdditionalDetails').value = input.additionalDetails || '';
+                updateOutcomeUnitLabel();
                 
+                // Input
+                document.getElementById('inputDescription').value = input.description || '';
+                document.getElementById('inputAdditionalDetails').value = input.additionalDetails || '';
+                var inputYears = input.years || [];
+                if (inputYears.length === 0 && (input.valueY0 || input.valueY1)) {
+                    inputYears = migrateOldYearData(input, startYear, ['valueY0','valueY1','valueY2','valueY3','valueY4','valueY5']);
+                }
+                loadYearsToContainer('inputYearsContainer', inputYears, 'input');
+                updateInputTotal();
+                
+                // Outcome category/type
                 if (['เศรษฐกิจ', 'สังคม', 'สิ่งแวดล้อม'].includes(outcome.category)) {
                     document.getElementById('outcomeCategory').value = outcome.category;
                     updateOutcomeOptions();
@@ -874,12 +997,11 @@ var DEMO_MODE = true;
                     document.getElementById('outcomeCategoryOther').classList.add('show');
                 }
                 
-                // Set outcome type
-                setTimeout(() => {
-                    const outcomeSelect = document.getElementById('outcomeType');
-                    let found = false;
-                    for (let opt of outcomeSelect.options) {
-                        if (opt.value === outcome.type) {
+                setTimeout(function() {
+                    var outcomeSelect = document.getElementById('outcomeType');
+                    var found = false;
+                    for (var j = 0; j < outcomeSelect.options.length; j++) {
+                        if (outcomeSelect.options[j].value === outcome.type) {
                             outcomeSelect.value = outcome.type;
                             found = true;
                             break;
@@ -893,23 +1015,28 @@ var DEMO_MODE = true;
                 }, 100);
                 
                 document.getElementById('indicator').value = outcome.indicator || '';
+                document.getElementById('outcomeQuantity').value = outcome.quantity || '';
                 document.getElementById('financialProxy').value = outcome.financialProxy || '';
-                document.getElementById('outcomeY0').value = values.Y0 || '';
-                document.getElementById('outcomeY1').value = values.Y1 || '';
-                document.getElementById('outcomeY2').value = values.Y2 || '';
-                document.getElementById('outcomeY3').value = values.Y3 || '';
-                document.getElementById('outcomeY4').value = values.Y4 || '';
-                document.getElementById('outcomeY5').value = values.Y5 || '';
+                document.getElementById('financialProxyValue').value = outcome.financialProxyValue || '';
                 
+                var outcomeYears = outcome.years || [];
+                if (outcomeYears.length === 0 && outcome.values) {
+                    outcomeYears = migrateOldYearData(outcome.values, startYear, ['Y0','Y1','Y2','Y3','Y4','Y5']);
+                }
+                loadYearsToContainer('outcomeYearsContainer', outcomeYears, 'outcome');
+                updateAutoCalc();
+                
+                // Adjust
                 document.getElementById('deadWeight').value = adjust.deadWeight || '';
                 document.getElementById('displacement').value = adjust.displacement || '';
                 document.getElementById('attribution').value = adjust.attribution || '';
                 document.getElementById('discountRate').value = adjust.discountRate || '3.5';
-                document.getElementById('dropoff1').value = dropoff[0] || '';
-                document.getElementById('dropoff2').value = dropoff[1] || '';
-                document.getElementById('dropoff3').value = dropoff[2] || '';
-                document.getElementById('dropoff4').value = dropoff[3] || '';
-                document.getElementById('dropoff5').value = dropoff[4] || '';
+                
+                var dropoffYears = adjust.dropoffYears || [];
+                if (dropoffYears.length === 0 && adjust.dropoff && Array.isArray(adjust.dropoff)) {
+                    dropoffYears = migrateOldDropoff(adjust.dropoff, startYear);
+                }
+                loadYearsToContainer('dropoffYearsContainer', dropoffYears, 'dropoff');
             } else {
                 document.getElementById('changeModalTitle').textContent = 'เพิ่ม Change';
                 clearChangeForm();
@@ -925,13 +1052,9 @@ var DEMO_MODE = true;
             document.getElementById('changeStakeholder').value = '';
             updateChangeStakeholderInfo();
             document.getElementById('inputDescription').value = '';
-            document.getElementById('inputValueY0').value = '';
-            document.getElementById('inputValueY1').value = '';
-            document.getElementById('inputValueY2').value = '';
-            document.getElementById('inputValueY3').value = '';
-            document.getElementById('inputValueY4').value = '';
-            document.getElementById('inputValueY5').value = '';
             document.getElementById('inputAdditionalDetails').value = '';
+            document.getElementById('inputYearsContainer').innerHTML = '';
+            updateInputTotal();
             document.getElementById('outcomeCategory').value = '';
             document.getElementById('outcomeCategoryOther').classList.remove('show');
             document.getElementById('outcomeCategoryOtherValue').value = '';
@@ -939,37 +1062,27 @@ var DEMO_MODE = true;
             document.getElementById('outcomeTypeOther').classList.remove('show');
             document.getElementById('outcomeTypeOtherValue').value = '';
             document.getElementById('indicator').value = '';
+            document.getElementById('outcomeQuantity').value = '';
             document.getElementById('financialProxy').value = '';
-            document.getElementById('outcomeY0').value = '';
-            document.getElementById('outcomeY1').value = '';
-            document.getElementById('outcomeY2').value = '';
-            document.getElementById('outcomeY3').value = '';
-            document.getElementById('outcomeY4').value = '';
-            document.getElementById('outcomeY5').value = '';
+            document.getElementById('financialProxyValue').value = '';
+            document.getElementById('outcomeYearsContainer').innerHTML = '';
+            updateAutoCalc();
             document.getElementById('deadWeight').value = '';
             document.getElementById('displacement').value = '';
             document.getElementById('attribution').value = '';
             document.getElementById('discountRate').value = '3.5';
-            document.getElementById('dropoff1').value = '';
-            document.getElementById('dropoff2').value = '';
-            document.getElementById('dropoff3').value = '';
-            document.getElementById('dropoff4').value = '';
-            document.getElementById('dropoff5').value = '';
+            document.getElementById('dropoffYearsContainer').innerHTML = '';
         }
 
         function saveChange() {
             try {
-                console.log('saveChange() called');
-                
                 const stakeholderIndex = document.getElementById('changeStakeholder').value;
-                console.log('stakeholderIndex:', stakeholderIndex);
                 
                 if (stakeholderIndex === '') {
                     showToast('กรุณาเลือก Stakeholder', 'error');
                     return;
                 }
                 
-                // ตรวจสอบว่ามี stakeholder อยู่จริง
                 if (!stakeholders[stakeholderIndex]) {
                     showToast('ไม่พบ Stakeholder ที่เลือก กรุณาเพิ่ม Stakeholder ก่อน', 'error');
                     return;
@@ -992,44 +1105,27 @@ var DEMO_MODE = true;
                     stakeholderUnit: stakeholders[stakeholderIndex].unit || 'คน',
                     input: {
                         description: document.getElementById('inputDescription').value.trim(),
-                        valueY0: parseFloat(document.getElementById('inputValueY0').value) || 0,
-                        valueY1: parseFloat(document.getElementById('inputValueY1').value) || 0,
-                        valueY2: parseFloat(document.getElementById('inputValueY2').value) || 0,
-                        valueY3: parseFloat(document.getElementById('inputValueY3').value) || 0,
-                        valueY4: parseFloat(document.getElementById('inputValueY4').value) || 0,
-                        valueY5: parseFloat(document.getElementById('inputValueY5').value) || 0,
+                        years: getYearsData('inputYearsContainer'),
                         additionalDetails: document.getElementById('inputAdditionalDetails').value.trim()
                     },
                     outcome: {
                         category: outcomeCategory,
                         type: outcomeType,
                         indicator: document.getElementById('indicator').value.trim(),
+                        quantity: parseFloat(document.getElementById('outcomeQuantity').value) || 0,
+                        unit: document.getElementById('outcomeUnitLabel').textContent || 'คน',
                         financialProxy: document.getElementById('financialProxy').value.trim(),
-                        values: {
-                            Y0: parseFloat(document.getElementById('outcomeY0').value) || 0,
-                            Y1: parseFloat(document.getElementById('outcomeY1').value) || 0,
-                            Y2: parseFloat(document.getElementById('outcomeY2').value) || 0,
-                            Y3: parseFloat(document.getElementById('outcomeY3').value) || 0,
-                            Y4: parseFloat(document.getElementById('outcomeY4').value) || 0,
-                            Y5: parseFloat(document.getElementById('outcomeY5').value) || 0
-                        }
+                        financialProxyValue: parseFloat(document.getElementById('financialProxyValue').value) || 0,
+                        years: getYearsData('outcomeYearsContainer')
                     },
                     adjust: {
                         deadWeight: parseFloat(document.getElementById('deadWeight').value) || 0,
                         displacement: parseFloat(document.getElementById('displacement').value) || 0,
                         attribution: parseFloat(document.getElementById('attribution').value) || 0,
                         discountRate: parseFloat(document.getElementById('discountRate').value) || 3.5,
-                        dropoff: [
-                            parseFloat(document.getElementById('dropoff1').value) || 0,
-                            parseFloat(document.getElementById('dropoff2').value) || 0,
-                            parseFloat(document.getElementById('dropoff3').value) || 0,
-                            parseFloat(document.getElementById('dropoff4').value) || 0,
-                            parseFloat(document.getElementById('dropoff5').value) || 0
-                        ]
+                        dropoffYears: getYearsData('dropoffYearsContainer')
                     }
                 };
-                
-                console.log('change object:', change);
                 
                 const editIndex = parseInt(document.getElementById('changeEditIndex').value);
                 if (editIndex >= 0) {
@@ -1038,17 +1134,10 @@ var DEMO_MODE = true;
                     changes.push(change);
                 }
                 
-                console.log('changes array:', changes);
-                
                 renderChangesTable();
-                
-                // แสดง Outcome Mapping ทันทีหลังบันทึก Change
                 updateOutcomeMapping();
-                
                 closeChangeModal();
                 showToast('บันทึก Change สำเร็จ', 'success');
-                
-                // บันทึกข้อมูลอัตโนมัติหลังจากแก้ไข Change (skip validation)
                 autoSaveData();
                 
             } catch (error) {
@@ -1076,16 +1165,32 @@ var DEMO_MODE = true;
             }
             
             tbody.innerHTML = changes.map((c, i) => {
-                // ป้องกัน error กรณีข้อมูลไม่ครบ
                 const input = c.input || {};
                 const outcome = c.outcome || {};
-                const values = outcome.values || {};
                 const adjust = c.adjust || {};
-                const dropoff = adjust.dropoff || [0, 0, 0, 0, 0];
+                var startYear = getProjectStartYear();
                 
-                // คำนวณ total input (Y0-Y5)
-                const totalInput = (input.valueY0 || 0) + (input.valueY1 || 0) + (input.valueY2 || 0) + 
-                                   (input.valueY3 || 0) + (input.valueY4 || 0) + (input.valueY5 || 0);
+                // Input years
+                var inputYears = input.years || [];
+                if (inputYears.length === 0 && (input.valueY0 || input.valueY1)) {
+                    inputYears = migrateOldYearData(input, startYear, ['valueY0','valueY1','valueY2','valueY3','valueY4','valueY5']);
+                }
+                var totalInput = inputYears.reduce(function(s, y) { return s + y.value; }, 0);
+                var inputDisplay = inputYears.map(function(y) { return y.year + ': ' + formatNumber(y.value); }).join('<br>') || '-';
+                
+                // Outcome years
+                var outcomeYears = outcome.years || [];
+                if (outcomeYears.length === 0 && outcome.values) {
+                    outcomeYears = migrateOldYearData(outcome.values, startYear, ['Y0','Y1','Y2','Y3','Y4','Y5']);
+                }
+                var outcomeDisplay = outcomeYears.map(function(y) { return y.year + ': ' + formatNumber(y.value); }).join('<br>') || '-';
+                
+                // Dropoff years
+                var dropoffYears = adjust.dropoffYears || [];
+                if (dropoffYears.length === 0 && adjust.dropoff && Array.isArray(adjust.dropoff)) {
+                    dropoffYears = migrateOldDropoff(adjust.dropoff, startYear);
+                }
+                var dropoffDisplay = dropoffYears.map(function(y) { return y.year + ': ' + y.value + '%'; }).join('<br>') || '-';
                 
                 return `
                 <tr>
@@ -1095,19 +1200,14 @@ var DEMO_MODE = true;
                     <td>${input.description || '-'}</td>
                     <td style="font-size: 0.8rem;">
                         รวม: ${formatNumber(totalInput)}<br>
-                        <small style="color: #718096;">Y0: ${formatNumber(input.valueY0 || 0)}</small>
+                        <small style="color: #718096;">${inputDisplay}</small>
                     </td>
                     <td><span class="badge badge-${getCategoryBadge(outcome.category)}">${outcome.category || '-'}</span></td>
                     <td>${outcome.type || '-'}</td>
                     <td>${outcome.indicator || '-'}</td>
                     <td>${outcome.financialProxy || '-'}</td>
                     <td style="font-size: 0.8rem;">
-                        Y0: ${formatNumber(values.Y0 || 0)}<br>
-                        Y1: ${formatNumber(values.Y1 || 0)}<br>
-                        Y2: ${formatNumber(values.Y2 || 0)}<br>
-                        Y3: ${formatNumber(values.Y3 || 0)}<br>
-                        Y4: ${formatNumber(values.Y4 || 0)}<br>
-                        Y5: ${formatNumber(values.Y5 || 0)}
+                        ${outcomeDisplay}
                     </td>
                     <td style="font-size: 0.8rem;">
                         DW: ${adjust.deadWeight || 0}%<br>
@@ -1116,11 +1216,7 @@ var DEMO_MODE = true;
                         DR: ${adjust.discountRate || 3.5}%
                     </td>
                     <td style="font-size: 0.8rem;">
-                        Y1: ${dropoff[0] || 0}%<br>
-                        Y2: ${dropoff[1] || 0}%<br>
-                        Y3: ${dropoff[2] || 0}%<br>
-                        Y4: ${dropoff[3] || 0}%<br>
-                        Y5: ${dropoff[4] || 0}%
+                        ${dropoffDisplay}
                     </td>
                     <td>
                         <div class="table-actions">
@@ -1155,81 +1251,84 @@ var DEMO_MODE = true;
 
         // ===== SROI Calculation =====
         function calculateSROI() {
-            const budget = parseFloat(document.getElementById('budget').value) || 0;
-            
-            console.log('=== calculateSROI() ===');
-            console.log('budget:', budget);
-            console.log('changes:', JSON.stringify(changes, null, 2));
-            
-            if (budget <= 0) {
-                showToast('กรุณากรอกงบประมาณโครงการ', 'error');
-                return;
-            }
-            
             if (changes.length === 0) {
                 showToast('กรุณาเพิ่มข้อมูล Change อย่างน้อย 1 รายการ', 'error');
                 return;
             }
             
-            // Calculate Total Investment (Input Y0 + Budget)
-            let totalInputValue = 0;
-            changes.forEach(c => {
-                const input = c.input || {};
-                totalInputValue += (input.valueY0 || 0);
+            var startYear = getProjectStartYear();
+            
+            // Total Investment = ผลรวม Input ทุก Change ทุกปี
+            var totalInvestment = 0;
+            changes.forEach(function(c) {
+                var input = c.input || {};
+                var years = input.years || [];
+                // Migration: ถ้ามีข้อมูลแบบเก่า
+                if (years.length === 0 && (input.valueY0 || input.valueY1)) {
+                    years = migrateOldYearData(input, startYear, ['valueY0','valueY1','valueY2','valueY3','valueY4','valueY5']);
+                }
+                years.forEach(function(y) { totalInvestment += y.value; });
             });
-            const totalInvestment = budget;
+            
+            if (totalInvestment <= 0) {
+                showToast('กรุณากรอกมูลค่า Input อย่างน้อย 1 ปี', 'error');
+                return;
+            }
             
             // Calculate Present Value for each change
-            let totalPresentValue = 0;
+            var totalPresentValue = 0;
             
-            changes.forEach((c, idx) => {
-                // ป้องกัน error กรณีข้อมูลไม่ครบ
-                const adjust = c.adjust || {};
-                const outcome = c.outcome || {};
-                const values = outcome.values || {};
-                const dropoffArr = adjust.dropoff || [0, 0, 0, 0, 0];
+            changes.forEach(function(c) {
+                var adjust = c.adjust || {};
+                var outcome = c.outcome || {};
                 
-                console.log(`Change ${idx} - outcome:`, outcome);
-                console.log(`Change ${idx} - values:`, values);
+                var dw = (adjust.deadWeight || 0) / 100;
+                var dp = (adjust.displacement || 0) / 100;
+                var at = (adjust.attribution || 0) / 100;
+                var dr = (adjust.discountRate || 3.5) / 100;
                 
-                const dw = (adjust.deadWeight || 0) / 100;
-                const dp = (adjust.displacement || 0) / 100;
-                const at = (adjust.attribution || 0) / 100;
-                const dr = (adjust.discountRate || 3.5) / 100;
-                const dropoffs = dropoffArr.map(d => (d || 0) / 100);
+                // Dropoff: year-based or old array
+                var dropoffYears = adjust.dropoffYears || [];
+                if (dropoffYears.length === 0 && adjust.dropoff && Array.isArray(adjust.dropoff)) {
+                    dropoffYears = migrateOldDropoff(adjust.dropoff, startYear);
+                }
                 
-                const years = ['Y0', 'Y1', 'Y2', 'Y3', 'Y4', 'Y5'];
+                // Outcome years
+                var outcomeYears = outcome.years || [];
+                if (outcomeYears.length === 0 && outcome.values) {
+                    outcomeYears = migrateOldYearData(outcome.values, startYear, ['Y0','Y1','Y2','Y3','Y4','Y5']);
+                }
                 
-                years.forEach((year, yearIndex) => {
-                    const value = values[year] || 0;
-                    console.log(`  ${year}: ${value}`);
+                outcomeYears.forEach(function(oy) {
+                    var yearIndex = oy.year - startYear;
+                    if (yearIndex < 0) yearIndex = 0;
+                    
+                    var value = oy.value || 0;
                     
                     // Adjusted Value = Value × (1 - DW) × (1 - DP) × (1 - AT)
-                    let adjustedValue = value * (1 - dw) * (1 - dp) * (1 - at);
+                    var adjustedValue = value * (1 - dw) * (1 - dp) * (1 - at);
                     
-                    // Apply drop-off for years > 0
+                    // Apply drop-off cumulatively for years > 0
                     if (yearIndex > 0) {
-                        let cumulativeDropoff = 1;
-                        for (let j = 0; j < yearIndex && j < dropoffs.length; j++) {
-                            cumulativeDropoff *= (1 - dropoffs[j]);
-                        }
+                        var cumulativeDropoff = 1;
+                        dropoffYears.forEach(function(dy) {
+                            var dyIndex = dy.year - startYear;
+                            if (dyIndex > 0 && dyIndex <= yearIndex) {
+                                cumulativeDropoff *= (1 - (dy.value || 0) / 100);
+                            }
+                        });
                         adjustedValue *= cumulativeDropoff;
                     }
                     
                     // Present Value = Adjusted Value / (1 + DR)^n
-                    const presentValue = adjustedValue / Math.pow(1 + dr, yearIndex);
+                    var presentValue = adjustedValue / Math.pow(1 + dr, yearIndex);
                     totalPresentValue += presentValue;
                 });
             });
             
-            console.log('totalPresentValue:', totalPresentValue);
-            console.log('totalInvestment:', totalInvestment);
-            
             // SROI Ratio
-            const sroiRatio = totalInvestment > 0 ? totalPresentValue / totalInvestment : 0;
-            const netBenefit = totalPresentValue - totalInvestment;
-            
-            console.log('sroiRatio:', sroiRatio);
+            var sroiRatio = totalInvestment > 0 ? totalPresentValue / totalInvestment : 0;
+            var netBenefit = totalPresentValue - totalInvestment;
             
             // Store result
             sroiResult = {
@@ -1245,10 +1344,7 @@ var DEMO_MODE = true;
             document.getElementById('totalInvestment').textContent = formatNumber(totalInvestment);
             document.getElementById('netBenefit').textContent = formatNumber(netBenefit);
             
-            // Update Outcome Mapping table
             updateOutcomeMapping();
-            
-            // Update summary section
             updateSummary();
             
             showToast('คำนวณ SROI สำเร็จ', 'success');
@@ -2351,6 +2447,34 @@ var DEMO_MODE = true;
             if (changeStakeholderSelect) {
                 changeStakeholderSelect.addEventListener('change', onChangeStakeholderChanged);
             }
+            
+            // Dynamic year buttons
+            var btnAddInputYear = document.getElementById('btnAddInputYear');
+            if (btnAddInputYear) {
+                btnAddInputYear.addEventListener('click', function() {
+                    addYearRow('inputYearsContainer', getProjectStartYear(), '', 'input');
+                });
+            }
+            
+            var btnAddOutcomeYear = document.getElementById('btnAddOutcomeYear');
+            if (btnAddOutcomeYear) {
+                btnAddOutcomeYear.addEventListener('click', function() {
+                    addYearRow('outcomeYearsContainer', getProjectStartYear(), '', 'outcome');
+                });
+            }
+            
+            var btnAddDropoffYear = document.getElementById('btnAddDropoffYear');
+            if (btnAddDropoffYear) {
+                btnAddDropoffYear.addEventListener('click', function() {
+                    addYearRow('dropoffYearsContainer', getProjectStartYear() + 1, '', 'dropoff');
+                });
+            }
+            
+            // Auto calc listeners
+            var outcomeQuantity = document.getElementById('outcomeQuantity');
+            var financialProxyValue = document.getElementById('financialProxyValue');
+            if (outcomeQuantity) outcomeQuantity.addEventListener('input', updateAutoCalc);
+            if (financialProxyValue) financialProxyValue.addEventListener('input', updateAutoCalc);
         });
         
         // แสดง Demo Banner
