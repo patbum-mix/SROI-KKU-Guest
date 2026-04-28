@@ -1409,3 +1409,129 @@
             margin: 0;
             font-size: 14px;
         }
+
+        /* ===== Dynamic Year Rows ===== */
+        .year-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: #f7fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .year-row select {
+            width: 130px;
+            padding: 0.5rem;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-family: 'Prompt', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .year-row input[type="number"] {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .year-row .btn-remove-year {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: #fed7d7;
+            color: #e53e3e;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .year-row .btn-remove-year:hover {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .btn-add-year {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Prompt', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+            transition: all 0.25s;
+        }
+
+        .btn-add-year:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .input-total-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: #ebf4ff;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #2c5282;
+        }
+
+        /* ===== Quantity + Unit ===== */
+        .quantity-unit-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .quantity-unit-row input {
+            flex: 1;
+        }
+
+        .unit-label {
+            padding: 0.5rem 1rem;
+            background: #e2e8f0;
+            border-radius: 8px;
+            font-weight: 500;
+            color: #4a5568;
+            white-space: nowrap;
+        }
+
+        /* ===== Auto Calc Box ===== */
+        .auto-calc-box {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            padding: 0.75rem 1rem;
+            background: linear-gradient(135deg, #f0fff4, #e6fffa);
+            border: 2px solid #38a169;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .auto-calc-label {
+            font-weight: 600;
+            color: #276749;
+        }
+
+        .auto-calc-box strong {
+            color: #276749;
+            font-size: 1.1rem;
+        }
