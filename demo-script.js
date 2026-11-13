@@ -1466,7 +1466,12 @@ var DEMO_MODE = true;
             
             updateOutcomeMapping();
             updateSummary();
-            
+
+            // บันทึกผลคำนวณลง sessionStorage (กัน reload หาย)
+            if (typeof DEMO_MODE !== 'undefined' && DEMO_MODE) {
+                sessionSaveData();
+            }
+
             showToast('คำนวณ SROI สำเร็จ', 'success');
         }
         
@@ -2403,6 +2408,10 @@ var DEMO_MODE = true;
                 `;
                 
                 setDefaultDate();
+
+                // ล้าง sessionStorage ด้วย
+                try { sessionStorage.removeItem('sroi_demo_data'); } catch(e) {}
+
                 showToast('ล้างข้อมูลสำเร็จ', 'success');
             }
         }
@@ -2418,9 +2427,9 @@ var DEMO_MODE = true;
 
         // Auto-save function (ไม่ต้อง validate phoneNumber)
         async function autoSaveData() {
-            // Demo mode - ไม่บันทึกลง server
+            // Demo mode - ไม่บันทึกลง server แต่บันทึกลง sessionStorage
             if (typeof DEMO_MODE !== 'undefined' && DEMO_MODE) {
-                console.log('Demo mode - ไม่บันทึกข้อมูล');
+                sessionSaveData();
                 return;
             }
             
@@ -2758,6 +2767,11 @@ var DEMO_MODE = true;
             initializeSDGs();
             initializeDatePickers();
             setDefaultDate();
+
+            // Demo mode: โหลดจาก sessionStorage (กัน Google Translate reload)
+            if (typeof DEMO_MODE !== 'undefined' && DEMO_MODE) {
+                sessionLoadData();
+            }
             loadSavedData();
             
             // Event delegation: Stakeholder table
@@ -2827,7 +2841,14 @@ var DEMO_MODE = true;
                     addYearRow('dropoffYearsContainer', getProjectStartYear() + 1, '', 'dropoff');
                 });
             }
-            
+
+            // Demo mode: Auto-save ลง sessionStorage ทุกครั้งที่แก้ไขข้อมูล
+            if (typeof DEMO_MODE !== 'undefined' && DEMO_MODE) {
+                // ฟัง input/change events ทั่วทั้งฟอร์ม
+                document.addEventListener('input', debouncedSessionSave);
+                document.addEventListener('change', debouncedSessionSave);
+            }
+
         });
         
         // แสดง Demo Banner
@@ -2847,6 +2868,75 @@ var DEMO_MODE = true;
             if (header) {
                 header.style.marginTop = '48px';
             }
+        }
+
+        // ===== SESSION STORAGE (กัน Google Translate ทำข้อมูลหาย) =====
+        function sessionSaveData() {
+            try {
+                var data = {
+                    project: {
+                        name: document.getElementById('projectName').value,
+                        recordDate: document.getElementById('recordDate').value,
+                        recorderName: document.getElementById('recorderName').value,
+                        budget: document.getElementById('budget').value,
+                        projectType: getSelectedValue('projectType', 'projectTypeOtherValue'),
+                        department: getSelectedValue('department', 'departmentOtherValue'),
+                        strategy: getSelectedValue('strategy', 'strategyOtherValue'),
+                        evaluationType: getSelectedValue('evaluationType', 'evaluationTypeOtherValue'),
+                        objectives: document.getElementById('objectives').value,
+                        expectedResults: document.getElementById('expectedResults').value,
+                        startDate: document.getElementById('startDate').value,
+                        endDate: document.getElementById('endDate').value,
+                        sdgs: getSelectedSDGs(),
+                        phoneNumber: (document.getElementById('phoneNumber') || {}).value || '',
+                        costType: (document.getElementById('costType') || {}).value || '',
+                        utilization: (document.getElementById('utilization') || {}).value || '',
+                        projectCode: (document.getElementById('projectCode') || {}).value || ''
+                    },
+                    stakeholders: stakeholders,
+                    changes: changes,
+                    sroiResult: sroiResult
+                };
+                sessionStorage.setItem('sroi_demo_data', JSON.stringify(data));
+                console.log('📦 sessionStorage saved');
+            } catch (e) {
+                console.log('sessionStorage save failed:', e.message);
+            }
+        }
+
+        function sessionLoadData() {
+            try {
+                var raw = sessionStorage.getItem('sroi_demo_data');
+                if (!raw) return false;
+                var data = JSON.parse(raw);
+                if (!data || !data.project) return false;
+                applyLoadedData(data);
+                // restore extra fields not in applyLoadedData
+                if (data.project.costType) {
+                    var ct = document.getElementById('costType');
+                    if (ct) ct.value = data.project.costType;
+                }
+                if (data.project.utilization) {
+                    var ut = document.getElementById('utilization');
+                    if (ut) ut.value = data.project.utilization;
+                }
+                if (data.project.projectCode) {
+                    var pc = document.getElementById('projectCode');
+                    if (pc) pc.value = data.project.projectCode;
+                }
+                console.log('📦 sessionStorage restored');
+                return true;
+            } catch (e) {
+                console.log('sessionStorage load failed:', e.message);
+                return false;
+            }
+        }
+
+        // Debounce auto-save เพื่อไม่ให้เรียกถี่เกินไป
+        var _sessionSaveTimer = null;
+        function debouncedSessionSave() {
+            if (_sessionSaveTimer) clearTimeout(_sessionSaveTimer);
+            _sessionSaveTimer = setTimeout(sessionSaveData, 500);
         }
 
         // ===== LANGUAGE TOGGLE SYSTEM =====
@@ -2880,6 +2970,9 @@ var DEMO_MODE = true;
                     }, 500);
                     return;
                 }
+                // บันทึกข้อมูลก่อนแปลภาษา
+                sessionSaveData();
+
                 var select = document.querySelector('select.goog-te-combo');
                 if (select) {
                     select.value = 'en';
@@ -2888,17 +2981,20 @@ var DEMO_MODE = true;
                     updateLangButton();
                 }
             } else {
+                // บันทึกข้อมูลก่อน reload (กัน Google Translate ทำข้อมูลหาย)
+                sessionSaveData();
+
                 localStorage.setItem('sroiStayLoggedIn', 'true');
-                
+
                 document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
                 document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + location.hostname;
                 document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.' + location.hostname;
-                
+
                 var gtElems = document.querySelectorAll('.goog-te-banner-frame, .goog-te-menu-frame, .skiptranslate');
                 gtElems.forEach(function(el) { el.remove(); });
-                
+
                 document.documentElement.classList.remove('translated-ltr', 'translated-rtl');
-                
+
                 location.reload(true);
             }
         }
